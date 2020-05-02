@@ -22,22 +22,13 @@ pipeline {
                         stage(list[i] + ' build'){
                             steps {
                                 script {
-                                dir ("services/"+list[i]) {
-                                sh " ls"
-                                }
-                                }
-                                script {
-                                dir ("services/"+list[i]) {
-                                sh " ls"
-                                }
+                                sh "ls -la"
                                 }
                             }
                         }
                         stage(list[i] + ' docker build'){
                             steps {
-                                dir ("services/"+list[i]) {
                                 sh "docker build -f build/dockerfile ."
-                                }
                             }
                         }
                     }

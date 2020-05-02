@@ -1,0 +1,122 @@
+#!/usr/bin/env groovy
+
+pipeline {
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+    }
+    agent any
+    stages {
+        stage ('parallel builds'){
+            parallel {
+                stage('dir1 build') {
+                    when {
+                        expression {
+                             matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir1' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir1'")
+                            return !matches
+                        }
+                    }
+                    steps {
+                        script {
+                        dir ("services/dir1") {
+                        sh " ls"
+                        }
+                        }
+                        script {
+                        dir ("services/dir1") {
+                        sh " ls"
+                        }
+                        }
+                    }
+                }
+                stage('dir1 docker build') {
+                    when {
+                        expression {
+                             matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir1' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir1'")
+                            return !matches
+                        }
+                        // branch 'dev'
+                    }
+                    steps {
+                        dir ("services/dir1") {
+                        sh "docker build -f build/dockerfile ."
+                        }
+                    }
+                }
+                stage('dir2 build') {
+                    when {
+                        expression {
+                             matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir2' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir2'")
+                            return !matches
+                        }
+                    }
+                    steps {
+                        script {
+                        dir ("services/dir2") {
+                        sh " ls"
+                        }
+                        }
+                        script {
+                        dir ("services/dir2") {
+                        sh " ls"
+                        }
+                        }
+                    }
+                }
+                stage('dir2 docker build') {
+                    when {
+                        expression {
+                             matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir2' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir2'")
+                            return !matches
+                        }
+                        // branch 'dev'
+                    }
+                    steps {
+                        dir ("services/dir2") {
+                        sh "docker build -f build/dockerfile ."
+                        }
+                    }
+                }
+                stage('dir3 build') {
+                    when {
+                        expression {
+                             matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir3' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir3'")
+                            return !matches
+                        }
+                    }
+                    steps {
+                        script {
+                        dir ("services/dir3") {
+                        sh " ls"
+                        }
+                        }
+                        script {
+                        dir ("services/dir3") {
+                        sh " ls"
+                        }
+                        }
+                    }
+                }
+                stage('dir3 docker build') {
+                    when {
+                        expression {
+                             matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir3' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'dir3'")
+                            return !matches
+                        }
+                        // branch 'dev'
+                    }
+                    steps {
+                        dir ("services/dir3") {
+                        sh "docker build -f build/dockerfile ."
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // chjvj
+    post{
+        always{
+            cleanWs()
+        }
+    }
+}

@@ -1,5 +1,3 @@
-#!/usr/bin/env groovy
-
 def list
 pipeline {
     options {
@@ -7,12 +5,32 @@ pipeline {
     }
     agent none
     stages {
-        stage('Dynamic Stages') {
-            steps{
+        stage('Create List') {
+            agent any
+            steps {
                 script {
+                    // you may create your list here, lets say reading from a file after checkout
                     list = ["dir1", "dir2", "dir3"]
+                }
+            }
+            post {
+                cleanup {
+                    cleanWs()
+                }
+            }
+        }
+        stage('Dynamic Stages') {
+            agent any
+            steps {
+                script {
                     for(int i=0; i < list.size(); i++) {
                         stage(list[i] + ' build'){
+                            when {
+                                expression {
+                                     matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i] || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i]")
+                                    return !matches
+                                }
+                            }
                             steps {
                                 script {
                                 dir ("services/"+list[i]) {
@@ -27,6 +45,13 @@ pipeline {
                             }
                         }
                         stage(list[i] + ' docker build'){
+                            when {
+                                expression {
+                                     matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i] || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i]")
+                                    return !matches
+                                }
+                                // branch 'dev'
+                            }
                             steps {
                                 dir ("services/"+list[i]) {
                                 sh "docker build -f build/dockerfile ."
@@ -34,6 +59,11 @@ pipeline {
                             }
                         }
                     }
+                }
+            }
+            post {
+                cleanup {
+                    cleanWs()
                 }
             }
         }

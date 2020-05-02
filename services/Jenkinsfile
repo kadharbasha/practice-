@@ -9,39 +9,37 @@ pipeline {
     script {
         nameOfServices.each {
             builds[it] = {
-                stages {
-                    stage("${it} build") {
-                        when {
-                            expression {
-                                 matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${it}' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${it}'")
-                                return !matches
-                            }
-                        }
-                        steps {
-                            script {
-                            dir ("services/${it}") {
-                            sh " ls"
-                            }
-                            }
-                            script {
-                            dir ("services/${it}") {
-                            sh " ls"
-                            }
-                            }
+                stage("${it} build") {
+                    when {
+                        expression {
+                             matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${it}' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${it}'")
+                            return !matches
                         }
                     }
-                    stage("${it} docker build") {
-                        when {
-                            expression {
-                                 matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${it}' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${it}'")
-                                return !matches
-                            }
-                            // branch 'dev'
+                    steps {
+                        script {
+                        dir ("services/${it}") {
+                        sh " ls"
                         }
-                        steps {
-                            dir ("services/${it}") {
-                            sh "docker build -f build/dockerfile ."
-                            }
+                        }
+                        script {
+                        dir ("services/${it}") {
+                        sh " ls"
+                        }
+                        }
+                    }
+                }
+                stage("${it} docker build") {
+                    when {
+                        expression {
+                             matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${it}' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${it}'")
+                            return !matches
+                        }
+                        // branch 'dev'
+                    }
+                    steps {
+                        dir ("services/${it}") {
+                        sh "docker build -f build/dockerfile ."
                         }
                     }
                 }

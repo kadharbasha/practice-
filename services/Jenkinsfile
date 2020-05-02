@@ -6,7 +6,7 @@ pipeline {
     }
     agent any
     stages {
-        stage ('parallel builds'){
+        stage ('parallel builds test'){
             parallel {
                 stage('dir1 build') {
                     when {

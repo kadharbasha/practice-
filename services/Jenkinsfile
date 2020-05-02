@@ -6,7 +6,7 @@ pipeline {
         }
     def builds = [:]
     agent { label 'go-mgmt-slave'}
-    script {
+    stages {
         nameOfServices.each {
             builds[it] = {
                 stage("${it} build") {

@@ -22,7 +22,10 @@ pipeline {
             steps {
                 script {
                     for(int i=0; i < list.size(); i++) {
-                        stage(list[i]){
+                        stage("list[i] build"){
+                            echo "Element: $i"
+                        }
+                        stage('list[i] docker build'){
                             echo "Element: $i"
                         }
                     }

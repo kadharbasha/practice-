@@ -1,10 +1,8 @@
 #!/usr/bin/env groovy
-
+def list
+def nameOfServices = ['timeseries-pi' ,'timeseriesboard' ,'timeseriescontextpi' ,'uom' ,'usermanagement' ,'usernotification' ,'usersettings' ,'websocket' ,'websocketv2' ,'wellmanager']
+def builds = [:]
 pipeline {
-    parameters {
-            choice(name: 'SERVICES', choices: ['dir1', 'dir2', 'dir3'], description: 'nameOfServices')
-        }
-    def builds = [:]
     agent { label 'go-mgmt-slave'}
     stages {
         stage('buildparallel'){

@@ -8,7 +8,7 @@ pipeline {
     agent { label 'go-mgmt-slave'}
     stages {
         stage('buildparallel'){
-            parallel {
+            steps {
                 nameOfServices.each {
                     builds[it] = {
                         stage("${it} build") {

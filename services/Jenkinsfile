@@ -1,9 +1,9 @@
 #!/usr/bin/env groovy
 
 pipeline {
-    agent { label 'go-mgmt-slave'}
     def nameOfServices = ['dir1', 'dir2', 'dir3']
     def builds = [:]
+    agent { label 'go-mgmt-slave'}
     script {
         nameOfServices.each {
             builds[it] = {

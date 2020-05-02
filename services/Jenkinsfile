@@ -6,9 +6,34 @@ def parallelStagesMap = jobs.collectEntries {
 
 def generateStage(job) {
     return {
-        stage("stage: ${job}") {
-                echo "This is ${job}."
-                sh script: "echo ${job}"
+        stage("${job} build") {
+            when {
+                expression {
+                    matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${job} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${job}")
+                    return !matches
+                }
+            }
+            steps {
+                script {
+                    dir ("services/${job}") {
+                    sh " ls"
+                    }
+                }
+            }
+        }
+        stage('${job} docker build') {
+            when {
+                expression {
+                     matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${job} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${job}")
+                    return !matches
+                }
+                // branch 'dev'
+            }
+            steps {
+                dir ("services/${job}") {
+                sh "docker build -f build/dockerfile ."
+                }
+            }
         }
     }
 }
@@ -16,12 +41,6 @@ def generateStage(job) {
 pipeline {
     agent any
     stages {
-        stage('non-parallel stage') {
-            steps {
-                echo 'This stage will be executed first.'
-            }
-        }
-
         stage('parallel stage') {
             steps {
                 script {

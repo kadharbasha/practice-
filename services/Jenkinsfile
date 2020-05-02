@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 pipeline {
-    agent any{
+    agent any {
         def nameOfServices = ['dir1', 'dir2', 'dir3']
         def builds = [:]
         nameOfServices.each {

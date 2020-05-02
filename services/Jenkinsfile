@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     for(int i=0; i < list.size(); i++) {
-                        stage(list[i] + "build"){
+                        stage(list[i] + ' build'){
                             when {
                                 expression {
                                      matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i] || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i]")
@@ -44,7 +44,7 @@ pipeline {
                                 }
                             }
                         }
-                        stage(list[i] + 'docker build'){
+                        stage(list[i] + ' docker build'){
                             when {
                                 expression {
                                      matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i] || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i]")

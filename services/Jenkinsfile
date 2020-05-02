@@ -24,11 +24,39 @@ pipeline {
             steps {
                 script {
                     for(int i=0; i < list.size(); i++) {
-                        stage(list[i] + ' build'){
-                            echo "Element: $i"
+                        stage(list[i] + "build"){
+                            when {
+                                expression {
+                                     matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i] || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i]")
+                                    return !matches
+                                }
+                            }
+                            steps {
+                                script {
+                                dir ("services/"+list[i]) {
+                                sh " ls"
+                                }
+                                }
+                                script {
+                                dir ("services/"+list[i]) {
+                                sh " ls"
+                                }
+                                }
+                            }
                         }
-                        stage(list[i] + ' docker build'){
-                            echo "Element: $i"
+                        stage(list[i] + 'docker build'){
+                            when {
+                                expression {
+                                     matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i] || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i]")
+                                    return !matches
+                                }
+                                // branch 'dev'
+                            }
+                            steps {
+                                dir ("services/"+list[i]) {
+                                sh "docker build -f build/dockerfile ."
+                                }
+                            }
                         }
                     }
                 }

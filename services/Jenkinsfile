@@ -2,7 +2,7 @@
 
 pipeline {
     parameters {
-            choice(name: 'SERVICES', Services: ['dir1', 'dir2', 'dir3'], description: 'nameOfServices')
+            service(name: 'SERVICES', Services: ['dir1', 'dir2', 'dir3'], description: 'nameOfServices')
         }
     def builds = [:]
     agent { label 'go-mgmt-slave'}

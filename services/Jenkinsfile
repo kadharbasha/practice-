@@ -3,7 +3,7 @@ def list
 def nameOfServices = ['timeseries-pi' ,'timeseriesboard' ,'timeseriescontextpi' ,'uom' ,'usermanagement' ,'usernotification' ,'usersettings' ,'websocket' ,'websocketv2' ,'wellmanager']
 def builds = [:]
 pipeline {
-    agent { label 'go-mgmt-slave'}
+    agent any
     stages {
         stage('buildparallel'){
             steps {

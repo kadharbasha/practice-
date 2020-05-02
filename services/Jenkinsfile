@@ -8,7 +8,7 @@ pipeline {
             steps {
                 script {
                     // you may create your list here, lets say reading from a file after checkout
-                    list = ["dir1", "dir1", "dir1", "dir1", "dir1"]
+                    list = ["dir1", "dir2", "dir3"]
                 }
             }
             post {

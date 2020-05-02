@@ -1,68 +1,31 @@
-def list
-pipeline {
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '6'))
+def jobs = ["dir1", "dir2", "dir3"]
+
+def parallelStagesMap = jobs.collectEntries {
+    ["${it}" : generateStage(it)]
+}
+
+def generateStage(job) {
+    return {
+        stage("stage: ${job}") {
+                echo "This is ${job}."
+                sh script: "sleep 15"
+        }
     }
-    agent none
+}
+
+pipeline {
+    agent any
     stages {
-        stage('Create List') {
-            agent any
+        stage('non-parallel stage') {
             steps {
-                script {
-                    // you may create your list here, lets say reading from a file after checkout
-                    list = ["dir1", "dir2", "dir3"]
-                }
-            }
-            post {
-                cleanup {
-                    cleanWs()
-                }
+                echo 'This stage will be executed first.'
             }
         }
-        stage('Dynamic Stages') {
-            parallel {
+
+        stage('parallel stage') {
+            steps {
                 script {
-                    for(int i=0; i < list.size(); i++) {
-                        stage(list[i] + ' build'){
-                            when {
-                                expression {
-                                     matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i] || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i]")
-                                    return !matches
-                                }
-                            }
-                            steps {
-                                script {
-                                dir ("services/"+list[i]) {
-                                sh " ls"
-                                }
-                                }
-                                script {
-                                dir ("services/"+list[i]) {
-                                sh " ls"
-                                }
-                                }
-                            }
-                        }
-                        stage(list[i] + ' docker build'){
-                            when {
-                                expression {
-                                     matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i] || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i]")
-                                    return !matches
-                                }
-                                // branch 'dev'
-                            }
-                            steps {
-                                dir ("services/"+list[i]) {
-                                sh "docker build -f build/dockerfile ."
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            post {
-                cleanup {
-                    cleanWs()
+                    parallel parallelStagesMap
                 }
             }
         }

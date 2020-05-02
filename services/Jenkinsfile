@@ -13,11 +13,6 @@ pipeline {
                     list = ["dir1", "dir2", "dir3"]
                 }
             }
-            post {
-                cleanup {
-                    cleanWs()
-                }
-            }
         }
         stage('Dynamic Stages') {
             agent any
@@ -48,11 +43,11 @@ pipeline {
                     }
                 }
             }
-            post {
-                cleanup {
-                    cleanWs()
-                }
-            }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
         }
     }
 }

@@ -7,16 +7,13 @@ def parallelStagesMap = jobs.collectEntries {
 def generateStage(job) {
     return {
         stage("${job} build") {
-            when {
-                expression {
-                    matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${job} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${job}")
-                    return !matches
-                }
-            }
             steps {
                 script {
-                    dir ("services/${job}") {
-                    sh " ls"
+                    if (matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${job} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${job}")
+                    return !matches){
+                        dir ("services/${job}") {
+                        sh " ls"
+                        }
                     }
                 }
             }

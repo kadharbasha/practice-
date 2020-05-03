@@ -14,7 +14,12 @@ pipeline {
 	            	list = ["dir1", "dir2", "dir3"]
 	                for(int i=0; i < list.size(); i++) {
 	                    matches = sh (script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}")
-	                    sh "${matches}"
+				if(matches==""){
+					continue;
+				}
+				else{
+					echo "service: ${matches}"
+				}	
 	                }
 	            }
 	        }

@@ -5,10 +5,10 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '6'))
     }
-    agent none
+    agent any
     stages {
     	stage('Updated Service'){
-    		agent none
+    		agent any
     		steps{
 	            script {
 	            	list = ["dir1", "dir2", "dir3"]

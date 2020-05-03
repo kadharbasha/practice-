@@ -5,7 +5,7 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '6'))
     }
-    agent any
+    agent none
     stages {
     	stage('Updated Service'){
     		agent any
@@ -15,7 +15,7 @@ pipeline {
 	                for(int i=0; i < list.size(); i++) {
 		                /*when {
 		                    expression {*/
-		                         matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i] || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x list[i]")
+		                         matches = sh(returnStatus: true, script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'list[i]' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x 'list[i]'")
 		                        return !matches
 		                    /*}
 		                }*/

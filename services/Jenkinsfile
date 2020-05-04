@@ -20,7 +20,7 @@ pipeline {
                             if("$matches"!=true){
                                 echo "$matches"
                                 sh "ls -la"
-                                sh "cd services/${list[i]}"
+                                sh "cd services/${list[i]} && ls -la"
                                 sh "ls -la"
                             }
                         }

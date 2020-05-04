@@ -19,8 +19,8 @@ pipeline {
                             ) == 0
                             if("$matches"!=true){
                                 echo "$matches"
-                                sh " ls"
                                 sh "ls -la"
+                                sh "cd services/${list[i]}"
                             }
                         }
                     }

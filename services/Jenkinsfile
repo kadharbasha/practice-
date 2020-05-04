@@ -17,7 +17,7 @@ pipeline {
                             matches = sh (
                                 script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
                             ) == 0
-                            if("${matches}" == true){
+                            if("${matches}" == "${List[i]}"){
                                 echo "${WORKSPACE}"
                                 sh "ls"
                             }

@@ -19,6 +19,7 @@ pipeline {
                             for(int i=0; i < list.size(); i++) {
                                 def tag = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","").toUpperCase();
                                 def tag_val = "${tag}_IMAGE_TAG"
+                                echo "31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tag}"
                                 echo "${tag_val}"
                                 sh "echo ${tag}_IMAGE_TAG"
                                 sh "echo ${DIR1_IMAGE_TAG}"

@@ -24,6 +24,7 @@ pipeline {
                                 script{
                                     dir ("""services/${list[i]}""") {
                                         sh "ls -la"
+                                    }
                                 }
                             }
                         }

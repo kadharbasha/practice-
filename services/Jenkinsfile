@@ -26,6 +26,19 @@ pipeline {
                                 }
                             }
                         }
+                        stage(list[i] + '  docker push'){
+                            matches = sh (
+                                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
+                            ) == 0
+                            if("$matches"!=true){
+                                echo "$matches"
+                                sh "ls -la"
+                                sh "cd services/${list[i]} && ls -la"
+                                dir ("services/${list[i]}") {
+                                    sh "docker build -f build/dockerfile ."
+                                }
+                            }
+                        }
                     }
                 }
             }

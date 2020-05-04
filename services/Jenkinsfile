@@ -3,7 +3,6 @@ def DIR1_IMAGE_TAG= "7.18.0"
 def DIR1_ECR_REPOSITORY= "test_docker_image"
 
 def list
-def tag
 pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '6'))

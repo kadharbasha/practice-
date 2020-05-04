@@ -6,7 +6,8 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '6'))
     }
     agent none
-    stages {Preparing updated services') {
+    stages {
+        stage('Preparing updated services') {
             agent any
             steps {
                 script {

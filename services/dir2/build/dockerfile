@@ -3,9 +3,9 @@
 FROM golang:1.13.4-alpine as staging
 
 
-RUN mkdir test22
+RUN mkdir test12
 RUN mkdir test13
-RUN mkdir test22
-RUN mkdir test
+RUN mkdir test14
+RUN mkdir test15
 RUN mkdir test44
 

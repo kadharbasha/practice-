@@ -18,6 +18,8 @@ pipeline {
                             list = ["dir1", "dir2", "dir3"]
                             for(int i=0; i < list.size(); i++) {
                                 def tag = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","").toUpperCase();
+                                def tag_val = ${tag}_IMAGE_TAG
+                                echo "${tag_val}"
                                 sh "echo ${tag}_IMAGE_TAG"
                                 sh "echo ${DIR1_IMAGE_TAG}"
                                 matches = sh (

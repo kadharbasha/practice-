@@ -34,7 +34,7 @@ pipeline {
                                         sh "ls -la"
                                         sh "cd services/${list[i]} && ls -la"
                                         dir ("services/${list[i]}") {
-                                            sh "docker build -f build/dockerfile -t $TIMESERIESPI_ECR_REPOSITORY:$TIMESERIESPI_IMAGE_TAG ."
+                                            sh "docker build -f build/dockerfile -t $DIR1_ECR_REPOSITORY:$DIR1_IMAGE_TAG ."
                                             sh "ls -la"
                                         }
                                     }

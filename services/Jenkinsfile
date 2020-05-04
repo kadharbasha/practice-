@@ -8,19 +8,22 @@ pipeline {
     agent none
     stages {
     	stage('Updated Service'){
-		agent any
-		steps{
-		    script {
-			list = ["dir1", "dir2", "dir3"]
-			for(int i=0; i < list.size(); i++) {
-			    matches = sh (
-				script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
-			    ) == 0
-			echo "matches: ${matches}"
-			echo "service: ${list[i]}"
-			}
-		    }
-		}
+    		agent any
+    		steps{
+	            script {
+	            	list = ["dir1", "dir2", "dir3"]
+	                for(int i=0; i < list.size(); i++) {
+	                    matches = sh (
+	                    	script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
+	                    ) == 0
+                    	if(${matches} == true){
+                    		stage ("${list[i]} build") {
+	                            sh 'echo ${list[i]}'
+	                        }
+                    	}
+	                }
+	            }
+	        }
         }
     }
 }

@@ -20,6 +20,7 @@ pipeline {
                             if("$matches"!=true){
                                 echo "$matches"
                                 sh " ls"
+                                sh "ls -la"
                             }
                         }
                     }

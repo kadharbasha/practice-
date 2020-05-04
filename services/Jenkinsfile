@@ -19,7 +19,7 @@ pipeline {
                             )==0
                             if(ture){
                                 echo "${matches}"
-                                sh "${list[i]}"
+                                echo "${list[i]}"
                             }
                         }
                         stage(list[i] + ' docker build'){

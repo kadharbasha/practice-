@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('buildparallel'){
             parallel{
-                stage('Preparing updated services'){
+                stage('Preparing updated services') {
                     agent any
                     steps {
                         script {
@@ -45,13 +45,13 @@ pipeline {
                             }
                         }
                     }
+                    post {
+                        cleanup {
+                            cleanWs()
+                        }
+                    }
                 }
             }
-        }
-    }
-    post {
-        cleanup {
-            cleanWs()
         }
     }
 }

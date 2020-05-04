@@ -18,11 +18,8 @@ pipeline {
                                 script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
                             ) == 0
                             if("${matches}" == true){
-                                script {
-                                    dir ("services/") {
-                                    sh "ls"
-                                    }
-                                }
+                                sh "cd ${WORKSPACE}"
+                                sh "ls"
                             }
                         }
                         stage(list[i] + ' docker build'){
@@ -30,11 +27,8 @@ pipeline {
                                 script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
                             ) == 0
                             if("${matches}" == true){
-                                script {
-                                    dir ("services/${list[i]}") {
-                                    sh "ls"
-                                    }
-                                }
+                                sh "cd ${WORKSPACE}/services/${list[i]/}"
+                                sh "ls"
                             }
                         }
                     }

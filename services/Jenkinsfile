@@ -21,10 +21,8 @@ pipeline {
                                 echo "$matches"
                                 sh "ls -la"
                                 sh "cd services/${list[i]} && ls -la"
-                                script{
-                                    dir ("services/${list[i]}") {
-                                        sh "ls -la"
-                                    }
+                                dir ("services/${list[i]}") {
+                                    sh "ls -la"
                                 }
                             }
                         }

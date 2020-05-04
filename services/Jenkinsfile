@@ -19,7 +19,7 @@ pipeline {
                             ) == 0
                             if("${matches}" == true){
                                 script {
-                                    dir ("services/"+list[i]) {
+                                    dir ("services/") {
                                     sh "ls"
                                     }
                                 }
@@ -31,7 +31,7 @@ pipeline {
                             ) == 0
                             if("${matches}" == true){
                                 script {
-                                    dir ("services/"+list[i]) {
+                                    dir ("services/${list[i]}") {
                                     sh "ls"
                                     }
                                 }

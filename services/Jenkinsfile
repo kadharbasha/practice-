@@ -1,28 +1,16 @@
+#!/usr/bin/env groovy
+
 def list
 pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '6'))
     }
     agent none
-    stages {
-        stage('Create List') {
+    stages {Preparing updated services') {
             agent any
             steps {
                 script {
-                    // you may create your list here, lets say reading from a file after checkout
                     list = ["dir1", "dir2", "dir3"]
-                }
-            }
-            post {
-                cleanup {
-                    cleanWs()
-                }
-            }
-        }
-        stage('Dynamic Stages') {
-            agent any
-            steps {
-                script {
                     for(int i=0; i < list.size(); i++) {
                         stage(list[i] + ' build'){
                             matches = sh (

@@ -2,7 +2,7 @@
 def DIR1_IMAGE_TAG= "7.18.0"
 def DIR1_ECR_REPOSITORY= "test_docker_image"
 
-def list
+def map
 pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '6'))
@@ -15,13 +15,13 @@ pipeline {
                     agent any
                     steps {
                         script {
-                            list = ["dir1", "dir2", "dir3"]
-                            def map = [Io: 1, Europa: 2, Ganymed: 3]
-                            for (valu in map) {
-                                echo "${valu.key} ${valu.value}"
+                            def map = [dir1: 1.0.1, dir2: 2.0.1, dir3: 3.0.1]
+                            for (element in map) {
+                                echo "${element.key} ${element.value}"
                             }
                             for(int i=0; i < list.size(); i++) {
-                                def tag = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","").toUpperCase();
+                                def tagU = "${element.key}".toString().replaceAll("[^a-zA-Z0-9 ]+","").toUpperCase();
+                                def tag = "${element.key}".toString().replaceAll("[^a-zA-Z0-9 ]+","");
                                 def tag_val = "${tag}_IMAGE_TAG"
                                 echo "31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tag}"
                                 echo "31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tag}-arm32"
@@ -29,24 +29,24 @@ pipeline {
                                 sh "echo ${tag}_IMAGE_TAG"
                                 sh "echo ${DIR1_IMAGE_TAG}"
                                 matches = sh (
-                                        script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
+                                        script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${element.key} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${element.key}", returnStatus: true
                                     ) == 0
-                                if("$matches"!="false"){
-                                    stage(list[i] + ' build'){
+                                if("$matches"!="true"){
+                                    stage(element.key + ' build'){
                                         echo "$matches"
                                         sh "ls -la"
-                                        sh "cd services/${list[i]} && ls -la"
-                                        dir ("services/${list[i]}") {
+                                        sh "cd services/${element.key} && ls -la"
+                                        dir ("services/${element.key}") {
                                             sh "ls -la"
                                         }
                                     }
-                                    stage(list[i] + '  docker push'){
+                                    stage(element.key + '  docker push'){
                                         echo "$matches"
                                         sh "ls -la"
-                                        sh "cd services/${list[i]} && ls -la"
-                                        dir ("services/${list[i]}") {
+                                        sh "cd services/${element.key} && ls -la"
+                                        dir ("services/${element.key}") {
                                             sh "docker images"
-                                            sh "docker build -f build/dockerfile -t $DIR1_ECR_REPOSITORY:$DIR1_IMAGE_TAG ."
+                                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tag}:${element.value} ."
                                             sh "docker images"
                                         }
                                     }

@@ -1,4 +1,6 @@
 #!/usr/bin/env groovy
+def DIR1_IMAGE_TAG= "7.18.0"
+def DIR1_ECR_REPOSITORY= "test_docker_image"
 
 def list
 pipeline {
@@ -32,7 +34,7 @@ pipeline {
                                         sh "ls -la"
                                         sh "cd services/${list[i]} && ls -la"
                                         dir ("services/${list[i]}") {
-                                            sh "docker build -f build/dockerfile ."
+                                            sh "docker build -f build/dockerfile -t $TIMESERIESPI_ECR_REPOSITORY:$TIMESERIESPI_IMAGE_TAG .*/
                                             sh "ls -la"
                                         }
                                     }

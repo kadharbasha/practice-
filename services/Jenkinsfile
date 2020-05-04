@@ -16,7 +16,7 @@ pipeline {
                         stage(list[i] + ' build'){
                             matches = sh (
                                 script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}"
-                            ) return !matches
+                            )
                             if(ture){
                                 echo "${matches}"
                                 sh "${list[i]}"

@@ -32,7 +32,7 @@ pipeline {
                                         sh "ls -la"
                                         sh "cd services/${list[i]} && ls -la"
                                         dir ("services/${list[i]}") {
-                                            /*sh "docker build -f build/dockerfile ."*/
+                                            sh "docker build -f build/dockerfile ."
                                             sh "ls -la"
                                         }
                                     }

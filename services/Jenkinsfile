@@ -19,6 +19,7 @@ pipeline {
                             ) == 0
                             if("$matches"!=true){
                                 echo "$matches"
+                                sh " ls"
                             }
                         }
                     }

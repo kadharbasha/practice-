@@ -28,27 +28,18 @@ pipeline {
                                         }
                                     }
                                     stage(list[i] + '  docker push'){
-                                        
+                                        def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                                        echo "noSpec"
                                         for (element in map) {
-                                            echo "${list[i]} ${element.key} ${element.value}"
-                                            /*sh "docker build -f build/dockerfile -t ${element.key}:{$element.value} ."*/
-                                            /*sh "docker images"*/
-                                            if("${element.key}" == "${list[i]}"){
+                                            if("${element.key}" == "${noSpec}"){
                                                 tagname = "${element.key}"
                                                 tagnumber = "${element.value}"
-                                                echo "${tagname}"
-                                                echo "${tagnumber}"
                                                 break
-                                                /*dir ("services/${list[i]}") {
-                                                    sh "docker build -f build/dockerfile -t ${element.key}:${element.value} ."
-                                                    sh "ls -la"
-                                                }*/
                                             }
                                         }
                                         dir ("services/${list[i]}") {
-                                            sh "echo ${tagname} ${tagnumber}"
                                             sh "docker images"
-                                            sh "docker build -f build/dockerfile -t ${tagname}:${tagnumber} ."
+                                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
                                             sh "docker images"
                                         }
                                     }

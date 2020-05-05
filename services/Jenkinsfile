@@ -1,10 +1,7 @@
 #!/usr/bin/env groovy
 
+def list = ["dir1", "dir2", "dir3"]
 
-def DIR1_IMAGE_TAG= "7.18.0"
-def DIR1_ECR_REPOSITORY= "test_docker_image"
-
-def list
 pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '6'))
@@ -17,7 +14,6 @@ pipeline {
                     agent any
                     steps {
                         script {
-                            list = ["dir1", "dir2", "dir3"]
                             for(int i=0; i < list.size(); i++) {
                                 def tag = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","").toUpperCase();
                                 sh "echo ${tag}_IMAGE_TAG"

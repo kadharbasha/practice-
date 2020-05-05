@@ -28,7 +28,7 @@ pipeline {
                                     stage(list[i] + '  docker push'){
                                         for (element in map) {
                                             echo "${list[i]} ${element.key} ${element.value}"
-                                            sh "docker build -f build/dockerfile -t ${element.key}:${element.value} ."
+                                            sh "docker build -f build/dockerfile -t element.key:element.value ."
                                             sh "docker images"
                                             if("${element.key}" == "${list[i]}"){
                                                 /*dir ("services/${list[i]}") {

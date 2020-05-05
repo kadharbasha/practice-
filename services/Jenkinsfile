@@ -48,7 +48,7 @@ pipeline {
                                         dir ("services/${list[i]}") {
                                             sh "echo ${tagname} ${tagnumber}"
                                             sh "docker images"
-                                            /*sh "docker build -f build/dockerfile -t $DIR1_ECR_REPOSITORY:$DIR1_IMAGE_TAG ."*/
+                                            sh "docker build -f build/dockerfile -t ${tagname}:${tagnumber} ."
                                             sh "docker images"
                                         }
                                     }

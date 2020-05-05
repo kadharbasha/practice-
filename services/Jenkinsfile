@@ -1,7 +1,11 @@
 #!/usr/bin/env groovy
 
 def list = ["dir1", "dir2", "dir3"]
-def map = [dir1: "1.0.0", dir2: "2.0.1", dir3: "3.2.1"]
+def map = [
+    dir1: "1.0.0", 
+    dir2: "2.0.1", 
+    dir3: "3.2.1"
+]
 def tagname
 def tagnumber
 
@@ -29,7 +33,7 @@ pipeline {
                                     }
                                     stage(list[i] + '  docker push'){
                                         def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                                        echo "noSpec"
+                                        echo "${noSpec}"
                                         for (element in map) {
                                             if("${element.key}" == "${noSpec}"){
                                                 tagname = "${element.key}"

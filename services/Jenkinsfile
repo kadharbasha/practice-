@@ -2,6 +2,8 @@
 
 def list = ["dir1", "dir2", "dir3"]
 def map = [dir1: "1.0.0", dir2: "2.0.1", dir3: "3.2.1"]
+def tagname
+def tagnumber
 
 pipeline {
     options {
@@ -26,19 +28,27 @@ pipeline {
                                         }
                                     }
                                     stage(list[i] + '  docker push'){
+                                        
                                         for (element in map) {
                                             echo "${list[i]} ${element.key} ${element.value}"
                                             /*sh "docker build -f build/dockerfile -t ${element.key}:{$element.value} ."*/
                                             /*sh "docker images"*/
                                             if("${element.key}" == "${list[i]}"){
+                                                tagname = ${element.key}
+                                                tagnumber = ${element.value}
+                                                echo "${tagname}"
+                                                echo "${tagnumber}"
+                                                break
                                                 /*dir ("services/${list[i]}") {
                                                     sh "docker build -f build/dockerfile -t ${element.key}:${element.value} ."
                                                     sh "ls -la"
                                                 }*/
-                                                echo "inside map"
+                                                
+                                                
                                             }
                                         }
                                         dir ("services/${list[i]}") {
+                                            sh "echo ${tagname} ${tagnumber}"
                                             sh "docker images"
                                             /*sh "docker build -f build/dockerfile -t $DIR1_ECR_REPOSITORY:$DIR1_IMAGE_TAG ."*/
                                             sh "docker images"

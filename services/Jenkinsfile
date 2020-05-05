@@ -17,12 +17,15 @@ pipeline {
                     agent any
                     steps {
                         script {
-                            def map = [dir1: "1.0.0.02.03", dir2: "2.2.20.0.3.3.3", dir3: "3.3.12253.22366"]
-                            for (element in map) {
-                                echo "${element.key} ${element.value}"
-                            }
                             list = ["dir1", "dir2", "dir3"]
                             for(int i=0; i < list.size(); i++) {
+                                def map = [dir1: "1.0.0.02.03", dir2: "2.2.20.0.3.3.3", dir3: "3.3.12253.22366"]
+                                for (element in map) {
+                                    if("${element.key}"=="${list[i]}")
+                                    echo "${list[i]} ${element.key} ${element.value}"
+                                    sh "docker build -f services/${list[i]}/build/dockerfile -t ${element.key}:${element.value} ."
+                                    sh "docker images"
+                                }
                                 def tag = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","").toUpperCase();
                                 sh "echo ${tag}_IMAGE_TAG"
                                 sh "echo ${DIR1_IMAGE_TAG}"

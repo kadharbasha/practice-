@@ -39,10 +39,10 @@ pipeline {
                                         def map = [dir1: "1.0.0.02.03", dir2: "2.2.20.0.3.3.3", dir3: "3.3.12253.22366"]
                                         for (element in map) {
                                             echo "${list[i]} ${element.key} ${element.value}"
-                                            if("${element.key}"=="${list[i]}"){
+                                            /*if("${element.key}"=="${list[i]}"){
                                                 sh "docker build -f services/${list[i]}/build/dockerfile -t ${element.key}:${element.value} ."
                                                 sh "docker images"
-                                            }
+                                            }*/
                                         }
                                         echo "$matches"
                                         sh "ls -la"

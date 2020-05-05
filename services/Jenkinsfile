@@ -27,7 +27,7 @@ pipeline {
                                     }
                                     stage(list[i] + '  docker push'){
                                         for (element in map) {
-                                            sleep 50
+                                            sleep(time:5,unit:"SECONDS")
                                             echo "${list[i]} ${element.key} ${element.value}"
                                             sh "docker build -f build/dockerfile -t $element.key:$element.value ."
                                             sh "docker images"

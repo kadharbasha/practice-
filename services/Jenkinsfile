@@ -29,8 +29,10 @@ pipeline {
                                         for (element in map) {
                                             echo "${list[i]} ${element.key} ${element.value}"
                                             if("${element.key}" == "${list[i]}"){
-                                                sh "docker build -f services/${list[i]}/build/dockerfile -t ${element.key}:${element.value} ."
-                                                echo "inside map"
+                                                dir ("services/${list[i]}") {
+                                                    sh "docker build -f build/dockerfile -t ${element.key}:${element.value} ."
+                                                }
+                                                     echo "inside map"
                                             }
                                         }
                                         dir ("services/${list[i]}") {

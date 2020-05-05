@@ -34,8 +34,8 @@ pipeline {
                                             /*sh "docker build -f build/dockerfile -t ${element.key}:{$element.value} ."*/
                                             /*sh "docker images"*/
                                             if("${element.key}" == "${list[i]}"){
-                                                tagname = ${element.key}
-                                                tagnumber = ${element.value}
+                                                tagname = "${element.key}"
+                                                tagnumber = "${element.value}"
                                                 echo "${tagname}"
                                                 echo "${tagnumber}"
                                                 break
@@ -43,8 +43,6 @@ pipeline {
                                                     sh "docker build -f build/dockerfile -t ${element.key}:${element.value} ."
                                                     sh "ls -la"
                                                 }*/
-                                                
-                                                
                                             }
                                         }
                                         dir ("services/${list[i]}") {

@@ -22,7 +22,7 @@ pipeline {
                                 def tag = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","").toUpperCase();
                                 sh "echo ${tag}_IMAGE_TAG"
                                 sh "echo ${DIR1_IMAGE_TAG}"
-                                sh "docker build -f services/${list[i]}/build/dockerfile -t ${'${tag}'+_ECR_REPOSITORY}:$DIR1_IMAGE_TAG ."
+                                sh "docker build -f services/${list[i]}/build/dockerfile -t ${'${tag}'_ECR_REPOSITORY}:$DIR1_IMAGE_TAG ."
                                 matches = sh (
                                         script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
                                     ) == 0

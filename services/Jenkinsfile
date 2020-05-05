@@ -16,18 +16,11 @@ pipeline {
                     steps {
                         script {
                             for(int i=0; i < list.size(); i++) {
-                                def tag = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","").toUpperCase();
-                                sh "echo ${tag}_IMAGE_TAG"
-                                /*sh "echo ${DIR1_IMAGE_TAG}"
-                                sh "docker build -f services/${list[i]}/build/dockerfile -t ${#${tag}_ECR_REPOSITORY}:$DIR1_IMAGE_TAG ."*/
                                 matches = sh (
                                         script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
                                     ) == 0
                                 if("$matches"!="true"){
                                     stage(list[i] + ' build'){
-                                        echo "$matches"
-                                        sh "ls -la"
-                                        sh "cd services/${list[i]} && ls -la"
                                         dir ("services/${list[i]}") {
                                             sh "ls -la"
                                         }
@@ -40,9 +33,6 @@ pipeline {
                                                 sh "docker images"
                                             }*/
                                         }
-                                        echo "$matches"
-                                        sh "ls -la"
-                                        sh "cd services/${list[i]} && ls -la"
                                         dir ("services/${list[i]}") {
                                             sh "docker images"
                                             /*sh "docker build -f build/dockerfile -t $DIR1_ECR_REPOSITORY:$DIR1_IMAGE_TAG ."*/

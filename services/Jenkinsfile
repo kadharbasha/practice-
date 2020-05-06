@@ -3,7 +3,7 @@
 def generateStage(serv) {
     return {
         stage("${serv}"){
-            sh "docker rmi -f \$(docker images -aq)"
+
             def jname ="${serv}"
             def secName = jname.split(" ")
             matches = sh (

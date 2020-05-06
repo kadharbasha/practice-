@@ -5,7 +5,12 @@ def generateStage(serv) {
         stage("${serv}"){
             def jname ="${serv}"
             def nam = jname.split(" ")
-            echo "${nam[0]}"
+            if("${name[1]}"=="build"){
+                echo"this is build"
+            }
+            else if("${name[1]}"=="docker"){
+                echo "this is docker"
+            }
         }
     }
 }

@@ -12,7 +12,6 @@ def generateStage(serv) {
         matches = sh (
             script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${serv} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${serv}", returnStatus: true
         ) == 0
-        stages {
             stage("${serv} build"){
                 if("$matches"!="true"){               
                     dir ("services/${serv}") {
@@ -21,7 +20,6 @@ def generateStage(serv) {
                     }
                 }
             }
-            // if("${BRANCH_NAME}" == "dev"){
             stage("${serv} docker push"){
                 if("$matches"!="true"){               
                     dir ("services/${serv}") {
@@ -30,7 +28,6 @@ def generateStage(serv) {
                     }
                 }
             }
-            // }
         }
     }
 }

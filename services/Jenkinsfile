@@ -1,28 +1,41 @@
-def jobs = ["JobA", "JobB", "JobC"]
+#!/usr/bin/env groovy
 
-def parallelStagesMap = jobs.collectEntries {
+def list = ["dir1", "dir2", "dir3", "dir4", "dir5"]
+def map = [
+    dir1: "1.0.0", 
+    dir2: "2.0.1", 
+    dir3: "3.2.1",
+    dir4: "1.2.3",
+    dir5: "4.5.6"
+]
+def tagname
+def tagnumber
+
+def parallelStagesMap = list.collectEntries {
     ["${it}" : generateStage(it)]
 }
 
-def generateStage(job) {
+def generateStage(dir) {
     return {
-        stage("stage: ${job}") {
-                echo "This is ${job}."
-                sh script: "sleep 15"
+        stage("stage: ${dir}") {
+            matches = sh (
+                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${dir} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${dir}", returnStatus: true
+            ) == 0
+            if("$matches"!="true"){
+                stage(${dir} + ' build'){
+                    dir ("services/${${dir}}") {
+                        sh "ls -la"
+                        echo "${BRANCH_NAME}"
+                    }
+                }
+            }
         }
     }
 }
 
 pipeline {
     agent any
-
     stages {
-        stage('non-parallel stage') {
-            steps {
-                echo 'This stage will be executed first.'
-            }
-        }
-
         stage('parallel stage') {
             steps {
                 script {

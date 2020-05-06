@@ -16,7 +16,7 @@ def generateStage(serv) {
                     }
                 }
             }
-            else if("${secName[1]}"=="docker")&&(){
+            else if(("${secName[1]}"=="docker")&&("${BRANCH_NAME}" == "dev")){
                 if("$matches"!="true"){
                     def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                     def map = [

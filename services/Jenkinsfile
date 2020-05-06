@@ -10,9 +10,11 @@ def generateStage(serv) {
             ) == 0
             if("${secName[1]}"=="build"){
                 if("$matches"!="true"){
-                    dir ("services/${secName[0]}"){
-                         sh "docker build -f build/dockerfile ."
-                         echo "${BRANCH_NAME}"
+                    steps{
+                        dir ("services/${secName[0]}"){
+                            sh "docker build -f build/dockerfile ."
+                            echo "${BRANCH_NAME}"
+                        }
                     }
                 }
             }

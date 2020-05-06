@@ -3,7 +3,7 @@
 def generateStage(serv) {
     return {
         stage("${serv}"){
-            if(${serv}.endsWith("build")){
+            if("${serv}.endsWith('build')"){
                 echo "in"
             }
         }

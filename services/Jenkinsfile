@@ -29,6 +29,7 @@ pipeline {
                                     stage(list[i] + ' build'){
                                         dir ("services/${list[i]}") {
                                             sh "ls -la"
+                                            echo "${BRANCH_NAME}"
                                         }
                                     }
                                     stage(list[i] + '  docker push'){

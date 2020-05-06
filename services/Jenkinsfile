@@ -1,30 +1,56 @@
 #!/usr/bin/env groovy
 
-def list = ["dir1", "dir2", "dir3"]
+def job = ["build", "docke push"]
+def list = ["dir1", "dir2", "dir3", "dir4", "dir5"]
 def tagname
 def tagnumber
-def parallelStagesMap = list.collectEntries {
+def parallelStagesMap = job.collectEntries {
     ["${it}" : generateStage(it)]
 }
 
 def generateStage(serv) {
     return {
-        matches = sh (
-            script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${serv} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${serv}", returnStatus: true
-        ) == 0
-            stage("${serv} build"){
-                if("$matches"!="true"){               
-                    dir ("services/${serv}") {
+        for(int i=0; i < list.size(); i++) {
+            matches = sh (
+                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
+            ) == 0
+            if("$matches"!="true"){
+                stage("${list[i]} ${serv}"){
+                    dir ("services/${list[i]}") {
                         sh "ls -la"
                         echo "${BRANCH_NAME}"
                     }
                 }
-            }
-            stage("${serv} docker push"){
-                if("$matches"!="true"){               
-                    dir ("services/${serv}") {
-                        sh "ls -la"
-                        echo "${BRANCH_NAME}"
+                stage("${list[i]} ${serv}"){
+                    def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                    def map = [
+                        dir1: "1.0.0", 
+                        dir2: "2.0.1", 
+                        dir3: "3.2.1",
+                        dir4: "1.2.3",
+                        dir5: "4.5.6"
+                    ]
+                    for (element in map) {
+                        if("${element.key}" == "${noSpec}"){
+                            tagname = "${element.key}"
+                            tagnumber = "${element.value}"
+                            break
+                        }
+                    }
+                    dir ("services/${list[i]}") {
+                        if(("${list[i]}"!="dir4") && ("${list[i]}"!="dir5")) {
+                            echo "not dir4 or dir5"
+                            sh "docker images"
+                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+                            sh "docker images"
+                       }
+                       else{
+                           echo "dir4 or dir5"
+                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                           sh "docker images"
+                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                           sh "docker images"
+                       }
                     }
                 }
             }

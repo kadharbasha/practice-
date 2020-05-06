@@ -32,19 +32,21 @@ pipeline {
                                             echo "${BRANCH_NAME}"
                                         }
                                     }
-                                    stage(list[i] + '  docker push'){
-                                        def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                                        for (element in map) {
-                                            if("${element.key}" == "${noSpec}"){
-                                                tagname = "${element.key}"
-                                                tagnumber = "${element.value}"
-                                                break
+                                    if("${BRANCH_NAME}" == "dev"){
+                                        stage(list[i] + '  docker push'){
+                                            def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                                            for (element in map) {
+                                                if("${element.key}" == "${noSpec}"){
+                                                    tagname = "${element.key}"
+                                                    tagnumber = "${element.value}"
+                                                    break
+                                                }
                                             }
-                                        }
-                                        dir ("services/${list[i]}") {
-                                            sh "docker images"
-                                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
-                                            sh "docker images"
+                                            dir ("services/${list[i]}") {
+                                                sh "docker images"
+                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+                                                sh "docker images"
+                                            }
                                         }
                                     }
                                 }

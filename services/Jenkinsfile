@@ -1,12 +1,5 @@
 #!/usr/bin/env groovy
 
-def job = ["build", "docke push"]
-def tagname
-def tagnumber
-def parallelStagesMap = job.collectEntries {
-    ["${it}" : generateStage(it)]
-}
-
 def generateStage(serv) {
     return {
         def list = ["dir1", "dir2", "dir3", "dir4", "dir5"]
@@ -64,7 +57,9 @@ pipeline {
         stage('parallel stage') {
             steps {
                 script {
+                    for(i=0; i<2; i++){
                     parallel parallelStagesMap
+                    }
                 }
             }
         }

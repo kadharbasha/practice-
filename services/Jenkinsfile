@@ -3,11 +3,13 @@
 def generateStage(serv) {
     return {
         stage("${serv}"){
-            if("${serv}.contains("build")"){
-                echo "in"
+            when {
+                expression {
+                    ${serv}.contains("build")
+                }
             }
-            else{
-                echo "out"
+            steps {
+                echo "in"
             }
         }
     }

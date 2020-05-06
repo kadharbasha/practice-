@@ -3,7 +3,6 @@
 def generateStage(serv) {
     return {
         stage("${serv}"){
-
             def jname ="${serv}"
             def secName = jname.split(" ")
             matches = sh (
@@ -12,9 +11,8 @@ def generateStage(serv) {
             if("${secName[1]}"=="build"){
                 if("$matches"!="true"){
                     dir ("services/${secName[0]}"){
-                        sh "docker build -f build/dockerfile ."
+                         sh "ls -la"
                     }
-                    echo"this is build"
                 }
             }
             else if("${secName[1]}"=="docker"){
@@ -34,19 +32,21 @@ def generateStage(serv) {
                             break
                         }
                     }
-                    dir ("services/${secName[0]}"){
-                        if(("${secName[0]}"!="dir4") && ("${secName[0]}"!="dir5")) {
-                            echo "not dir4 or dir5"
+                    if(("${secName[0]}"!="dir4") && ("${secName[0]}"!="dir5")) {
+                        echo "not dir4 or dir5"
+                        dir ("services/${secName[0]}"){
                             sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
                             sh "docker images"
                         }
-                        else{
-                           echo "dir4 or dir5"
+                    }
+                    else{
+                       echo "dir4 or dir5"
+                       dir ("services/${secName[0]}"){
                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
                            sh "docker images"
                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
                            sh "docker images"
-                        }
+                       }
                     }
                 }
             }

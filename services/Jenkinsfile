@@ -3,9 +3,8 @@
 def generateStage(serv) {
     return {
         stage("${serv}"){
-            if("${serv}.endsWith('build')"){
-                echo "in"
-            }
+            def nam = ${serv}.split(" ")
+            echo ${nam}
         }
     }
 }

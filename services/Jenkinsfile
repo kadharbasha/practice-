@@ -3,12 +3,7 @@
 def generateStage(serv) {
     return {
         stage("${serv}"){
-            when {
-                expression {
-                    ${serv}.contains("build")
-                }
-            }
-            steps {
+            if(${serv}.endsWith("build")){
                 echo "in"
             }
         }

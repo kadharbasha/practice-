@@ -10,6 +10,9 @@ def generateStage(serv) {
     }
 }
 
+def tagname
+def tagnumber
+
 pipeline {
     agent any
     stages {
@@ -23,13 +26,11 @@ pipeline {
                         ) == 0
                         if("$matches"!="true"){
                             def job = ["${list[i]} build", "${list[i]} docke push"]
+                            def parallelStagesMap = job.collectEntries {
+                                ["${it}" : generateStage(it)]
+                            }
                             parallel parallelStagesMap
                         }
-                    }
-                    def tagname
-                    def tagnumber
-                    def parallelStagesMap = job.collectEntries {
-                        ["${it}" : generateStage(it)]
                     }
                 }
             }

@@ -1,7 +1,6 @@
 #!/usr/bin/env groovy
 
 def job = ["build", "docke push"]
-def list = ["dir1", "dir2", "dir3", "dir4", "dir5"]
 def tagname
 def tagnumber
 def parallelStagesMap = job.collectEntries {
@@ -10,6 +9,7 @@ def parallelStagesMap = job.collectEntries {
 
 def generateStage(serv) {
     return {
+        def list = ["dir1", "dir2", "dir3", "dir4", "dir5"]
         for(int i=0; i < list.size(); i++) {
             matches = sh (
                 script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true

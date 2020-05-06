@@ -57,6 +57,9 @@ def tagname
 def tagnumber
 
 pipeline {
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '6'))
+    }
     agent any
     stages {
         stage('parallel stage') {

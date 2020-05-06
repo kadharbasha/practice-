@@ -2,10 +2,8 @@
 
 def generateStage(serv) {
     return {
-        stage("${serv}"){
-            dir ("services/${serv}") {
-                sh "${serv}"
-            }
+        stage("test"){
+            sh "${serv}"
         }
     }
 }
@@ -26,7 +24,7 @@ pipeline {
                             script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
                         ) == 0
                         if("$matches"!="true"){
-                            def job = ["${list[i]}", "${list[i]}"]
+                            def job = ["${list[i]} build", "${list[i]} docker push"]
                             def parallelStagesMap = job.collectEntries {
                                 ["${it}" : generateStage(it)]
                             }

@@ -15,19 +15,46 @@ def parallelStagesMap = list.collectEntries {
     ["${it}" : generateStage(it)]
 }
 
-def generateStage(diry) {
+def generateStage(serv) {
     return {
             matches = sh (
-                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${diry} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${diry}", returnStatus: true
+                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${serv} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${serv}", returnStatus: true
             ) == 0
             if("$matches"!="true"){
-                stage("${diry} build"){
-                    dir ("services/${diry}") {
+                stage("${serv} build"){
+                    dir ("services/${serv}") {
                         sh "ls -la"
                         echo "${BRANCH_NAME}"
                     }
-                }
             }
+            // if("${BRANCH_NAME}" == "dev"){
+                stage(list[i] + '  docker push'){
+                    def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                    for (element in map) {
+                        if("${element.key}" == "${noSpec}"){
+                            tagname = "${element.key}"
+                            tagnumber = "${element.value}"
+                            break
+                        }
+                    }
+                    dir ("services/${list[i]}") {
+                        sh "docker images"
+                        if(("${list[i]}"!="dir4") && ("${list[i]}"!="dir5")) {
+                            echo "not dir4 or dir5"
+                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+                            sh "docker images"
+                       }
+                       else{
+                           echo "dir4 or dir5"
+                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                           sh "docker images"
+                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                           sh "docker images"
+                       }
+                    }
+                }
+           // }
+        }
     }
 }
 

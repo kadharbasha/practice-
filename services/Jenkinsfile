@@ -3,7 +3,7 @@
 def generateStage(serv) {
     return {
         stage("${serv}"){
-            def nam = ${serv}.split(" ")
+            def nam = "${serv}.split(" ")"
             echo ${nam}
         }
     }

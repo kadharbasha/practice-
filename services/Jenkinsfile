@@ -6,13 +6,23 @@ def generateStage(serv) {
             def jname ="${serv}"
             def secName = jname.split(" ")
             matches = sh (
-                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[1]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[1]}", returnStatus: true
+                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[0]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[0]}", returnStatus: true
             ) == 0
             if("${secName[1]}"=="build"){
-                echo"this is build"
+                if("$matches"!="false"){
+                    dir ("services/${secName[0]}){
+                        sh "ls -la"
+                    }
+                    echo"this is build"
+                }
             }
             else if("${secName[1]}"=="docker"){
-                echo "this is docker"
+                if("$matches"!="false"){
+                    dir ("services/${secName[0]}){
+                        sh "ls -la"
+                    }
+                    echo "this is docker"
+                }
             }
         }
     }

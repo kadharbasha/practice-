@@ -28,8 +28,8 @@ def generateStage(serv) {
                     }
             }
             // if("${BRANCH_NAME}" == "dev"){
-                stage(list[i] + '  docker push'){
-                    def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                stage("serv docker push"){
+                    def noSpec = "${serv}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                     for (element in map) {
                         if("${element.key}" == "${noSpec}"){
                             tagname = "${element.key}"
@@ -37,9 +37,9 @@ def generateStage(serv) {
                             break
                         }
                     }
-                    dir ("services/${list[i]}") {
+                    dir ("services/${serv}") {
                         sh "docker images"
-                        if(("${list[i]}"!="dir4") && ("${list[i]}"!="dir5")) {
+                        if(("${serv}"!="dir4") && ("${serv}"!="dir5")) {
                             echo "not dir4 or dir5"
                             sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
                             sh "docker images"

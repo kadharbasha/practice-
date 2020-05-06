@@ -46,7 +46,7 @@ pipeline {
                                             }
                                             dir ("services/${list[i]}") {
                                                 sh "docker images"
-                                                if(("$list[i]!="dir4")||("$list[i]!="dir5")) {
+                                                if(("$list[i]!=dir4)||("$list[i]!="dir5")) {
                                                     sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
                                                     sh "docker images"
                                                }

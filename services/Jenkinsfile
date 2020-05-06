@@ -2,8 +2,13 @@
 
 def generateStage(serv) {
     return {
-        stage("test"){
-            sh "ls -la"
+        stage("${serv}"){
+            if("${serv}.contains("build")){
+                echo "in"
+            }
+            else{
+                echo "out"
+            }
         }
     }
 }
@@ -18,19 +23,11 @@ pipeline {
         stage('parallel stage') {
             steps {
                 script {
-                    list = ["dir1", "dir2"]
-                    for(int i=0; i < list.size(); i++) {
-                        matches = sh (
-                            script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${list[i]}", returnStatus: true
-                        ) == 0
-                        if("$matches"!="true"){
-                            def job = ["${list[i]} build", "${list[i]} docker push"]
-                            def parallelStagesMap = job.collectEntries {
-                                ["${it}" : generateStage(it)]
-                            }
-                            parallel parallelStagesMap
-                        }
+                    def job = ["dir1 build", "dir1 docker push", "dir2 build", "dir2 docker push"]
+                    def parallelStagesMap = job.collectEntries {
+                        ["${it}" : generateStage(it)]
                     }
+                    parallel parallelStagesMap
                 }
             }
         }

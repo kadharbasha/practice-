@@ -3,7 +3,7 @@
 def generateStage(serv) {
     return {
         stage("${serv}"){
-            if("${serv}.contains("build")){
+            if("${serv}.contains('build')"){
                 echo "in"
             }
             else{

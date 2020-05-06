@@ -22,8 +22,8 @@ def generateStage(dir) {
                 script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${dir} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${dir}", returnStatus: true
             ) == 0
             if("$matches"!="true"){
-                stage(${dir} + ' build'){
-                    //dir ("services/${${dir}}") {
+                stage("${dir} build"){
+                    //dir ("services/${dir}") {
                         sh "ls -la"
                         echo "${BRANCH_NAME}"
                     //}

@@ -12,10 +12,11 @@ def generateStage(serv) {
                 if("$matches"!="true"){
                     dir ("services/${secName[0]}"){
                          sh "ls -la"
+                         echo "${BRANCH_NAME}"
                     }
                 }
             }
-            else if("${secName[1]}"=="docker"){
+            else if("${secName[1]}"=="docker")&&(){
                 if("$matches"!="true"){
                     def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                     def map = [

@@ -4,11 +4,11 @@ def generateStage(serv) {
     return {
         stage("${serv}"){
             def jname ="${serv}"
-            def nam = jname.split(" ")
-            if("${name[1]}"=="build"){
+            def secName = jname.split(" ")
+            if("${secName[1]}"=="build"){
                 echo"this is build"
             }
-            else if("${name[1]}"=="docker"){
+            else if("${secName[1]}"=="docker"){
                 echo "this is docker"
             }
         }

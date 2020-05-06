@@ -26,10 +26,10 @@ def generateStage(serv) {
                         dir4: "1.2.3",
                         dir5: "4.5.6"
                     ]
-                    for (element in map) {
-                        if("${element.key}" == "${noSpec}"){
-                            tagname = "${element.key}"
-                            tagnumber = "${element.value}"
+                    for (def key in map.keySet()) {
+                        if("${key}" == "${noSpec}"){
+                            tagname = "${key}"
+                            tagnumber = "${map[key]}"
                             break
                         }
                     }
@@ -69,9 +69,7 @@ pipeline {
                     def parallelStagesMap = job.collectEntries {
                         ["${it}" : generateStage(it)]
                     }
-                    timestamps {
-                        parallel parallelStagesMap
-                    }
+                    parallel parallelStagesMap
                 }
             }
         }

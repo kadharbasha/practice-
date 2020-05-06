@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 def list = ["dir1", "dir2", "dir3", "dir4", "dir5"]
-def map = [
+def mapp = [
     dir1: "1.0.0", 
     dir2: "2.0.1", 
     dir3: "3.2.1",
@@ -30,7 +30,7 @@ def generateStage(serv) {
             // if("${BRANCH_NAME}" == "dev"){
                 stage("${serv} docker push"){
                     def noSpec = "${serv}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                    for (element in map) {
+                    for (element in mapp) {
                         if("${element.key}" == "${noSpec}"){
                             tagname = "${element.key}"
                             tagnumber = "${element.value}"

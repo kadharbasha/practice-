@@ -1,10 +1,12 @@
 #!/usr/bin/env groovy
 
-def list = ["dir1", "dir2", "dir3"]
+def list = ["dir1", "dir2", "dir3", "dir4", "dir5"]
 def map = [
     dir1: "1.0.0", 
     dir2: "2.0.1", 
-    dir3: "3.2.1"
+    dir3: "3.2.1",
+    dir4: "1.2.3",
+    dir5: "4.5.6"
 ]
 def tagname
 def tagnumber
@@ -32,7 +34,7 @@ pipeline {
                                             echo "${BRANCH_NAME}"
                                         }
                                     }
-                                    if("${BRANCH_NAME}" == "dev"){
+                                   // if("${BRANCH_NAME}" == "dev"){
                                         stage(list[i] + '  docker push'){
                                             def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                                             for (element in map) {
@@ -44,11 +46,19 @@ pipeline {
                                             }
                                             dir ("services/${list[i]}") {
                                                 sh "docker images"
-                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
-                                                sh "docker images"
+                                                if("$list[i]!="dir4"||"dir5") {
+                                                    sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+                                                    sh "docker images"
+                                               }
+                                               else{
+                                                   sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                                                   sh "docker images"
+                                                   sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                                                   sh "docker images"
+                                               }
                                             }
                                         }
-                                    }
+                                   // }
                                 }
                             }
                         }

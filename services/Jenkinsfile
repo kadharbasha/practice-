@@ -2,10 +2,9 @@
 
 def generateStage(serv) {
     return {
-            stage("${serv}"){
-                dir ("services/${list[i]}") {
-                    sh "${serv}"
-                }
+        stage("${serv}"){
+            dir ("services/${list[i]}") {
+                sh "${serv}"
             }
         }
     }

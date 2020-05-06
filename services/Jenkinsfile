@@ -67,7 +67,9 @@ pipeline {
                     def parallelStagesMap = job.collectEntries {
                         ["${it}" : generateStage(it)]
                     }
-                    parallel parallelStagesMap
+                    timestamps {
+                        parallel parallelStagesMap
+                    }
                 }
             }
         }

@@ -15,18 +15,17 @@ def parallelStagesMap = list.collectEntries {
     ["${it}" : generateStage(it)]
 }
 
-def generateStage(dir) {
+def generateStage(diry) {
     return {
-        
             matches = sh (
-                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${dir} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${dir}", returnStatus: true
+                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${diry} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${diry}", returnStatus: true
             ) == 0
             if("$matches"!="true"){
-                stage("${dir} build"){
-                    //dir ("services/${dir}") {
+                stage("${diry} build"){
+                    dir ("services/${diry}") {
                         sh "ls -la"
                         echo "${BRANCH_NAME}"
-                    //}
+                    }
                 }
             }
     }

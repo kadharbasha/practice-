@@ -5,6 +5,9 @@ def generateStage(serv) {
         stage("${serv}"){
             def jname ="${serv}"
             def secName = jname.split(" ")
+            matches = sh (
+                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[1]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[1]}", returnStatus: true
+            ) == 0
             if("${secName[1]}"=="build"){
                 echo"this is build"
             }

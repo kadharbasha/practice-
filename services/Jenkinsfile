@@ -1,13 +1,7 @@
 #!/usr/bin/env groovy
 
 def list = ["dir1", "dir2", "dir3", "dir4", "dir5"]
-def mapp = [
-    dir1: "1.0.0", 
-    dir2: "2.0.1", 
-    dir3: "3.2.1",
-    dir4: "1.2.3",
-    dir5: "4.5.6"
-]
+
 def tagname
 def tagnumber
 
@@ -30,6 +24,13 @@ def generateStage(serv) {
             // if("${BRANCH_NAME}" == "dev"){
                 stage("${serv} docker push"){
                     def noSpec = "${serv}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                    def mapp = [
+                        dir1: "1.0.0", 
+                        dir2: "2.0.1", 
+                        dir3: "3.2.1",
+                        dir4: "1.2.3",
+                        dir5: "4.5.6"
+                    ]
                     for (element in mapp) {
                         if("${element.key}" == "${noSpec}"){
                             tagname = "${element.key}"

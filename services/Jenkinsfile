@@ -19,7 +19,10 @@ def generateStage(serv) {
                         echo "${BRANCH_NAME}"
                     }
                 }
-                def noSpec = "${serv}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                
+                // if("${BRANCH_NAME}" == "dev"){
+                stage("${serv} docker push"){
+                    def noSpec = "${serv}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                 def map = [
                     dir1: "1.0.0", 
                     dir2: "2.0.1", 
@@ -34,8 +37,6 @@ def generateStage(serv) {
                         break
                     }
                 }
-                // if("${BRANCH_NAME}" == "dev"){
-                stage("${serv} docker push"){
                     dir ("services/${serv}") {
                         sh "docker images"
                         if(("${serv}"!="dir4") && ("${serv}"!="dir5")) {

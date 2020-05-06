@@ -3,7 +3,7 @@
 def generateStage(serv) {
     return {
         stage("test"){
-            sh "${serv}"
+            sh "ls -la"
         }
     }
 }

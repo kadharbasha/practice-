@@ -5,7 +5,7 @@ def generateStage(serv) {
         stage("${serv}"){
             def jname ="${serv}"
             def nam = jname.split(" ")
-            echo "${nam}"
+            echo "${nam[0]}"
         }
     }
 }

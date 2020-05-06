@@ -19,7 +19,7 @@ def generateStage(serv) {
             }
             else if("${secName[1]}"=="docker"){
                 if("$matches"!="true"){
-                    def noSpec = "${serv}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                    def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                     def map = [
                         dir1: "1.0.0", 
                         dir2: "2.0.1", 
@@ -53,7 +53,6 @@ def generateStage(serv) {
     }
 }
 
-def list
 def tagname
 def tagnumber
 

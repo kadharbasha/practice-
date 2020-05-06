@@ -10,7 +10,7 @@ def generateStage(serv) {
             ) == 0
             if("${secName[1]}"=="build"){
                 if("$matches"!="false"){
-                    dir ("services/${secName[0]}){
+                    dir ("services/${secName[0]}"){
                         sh "ls -la"
                     }
                     echo"this is build"
@@ -18,7 +18,7 @@ def generateStage(serv) {
             }
             else if("${secName[1]}"=="docker"){
                 if("$matches"!="false"){
-                    dir ("services/${secName[0]}){
+                    dir ("services/${secName[0]}"){
                         sh "ls -la"
                     }
                     echo "this is docker"

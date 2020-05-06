@@ -18,24 +18,24 @@ def generateStage(serv) {
                         sh "ls -la"
                         echo "${BRANCH_NAME}"
                     }
-            }
-            // if("${BRANCH_NAME}" == "dev"){
-                stage("${serv} docker push"){
-                    def noSpec = "${serv}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                    def map = [
-                        dir1: "1.0.0", 
-                        dir2: "2.0.1", 
-                        dir3: "3.2.1",
-                        dir4: "1.2.3",
-                        dir5: "4.5.6"
-                    ]
-                    for (element in map) {
-                        if("${element.key}" == "${noSpec}"){
-                            tagname = "${element.key}"
-                            tagnumber = "${element.value}"
-                            break
-                        }
+                }
+                def noSpec = "${serv}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                def map = [
+                    dir1: "1.0.0", 
+                    dir2: "2.0.1", 
+                    dir3: "3.2.1",
+                    dir4: "1.2.3",
+                    dir5: "4.5.6"
+                ]
+                for (element in map) {
+                    if("${element.key}" == "${noSpec}"){
+                        tagname = "${element.key}"
+                        tagnumber = "${element.value}"
+                        break
                     }
+                }
+                // if("${BRANCH_NAME}" == "dev"){
+                stage("${serv} docker push"){
                     dir ("services/${serv}") {
                         sh "docker images"
                         if(("${serv}"!="dir4") && ("${serv}"!="dir5")) {

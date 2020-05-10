@@ -1,4 +1,26 @@
 #!/usr/bin/env groovy
+def tagname
+def tagnumber
+
+pipeline {
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '6'))
+    }
+    agent any
+    stages {
+        stage('parallel stage') {
+            steps {
+                script {
+                    def job = ["dir1 build", "dir1 docker push", "dir2 build", "dir2 docker push", "dir3 build", "dir3 docker push", "dir4 build", "dir4 docker push", "dir5 build", "dir5 docker push"]
+                    def parallelStagesMap = job.collectEntries {
+                        ["${it}" : generateStage(it)]
+                    }
+                    parallel parallelStagesMap
+                }
+            }
+        }
+    }
+}
 
 def generateStage(serv) {
     return {
@@ -47,29 +69,6 @@ def generateStage(serv) {
                            sh "docker images"
                        }
                     }
-                }
-            }
-        }
-    }
-}
-
-def tagname
-def tagnumber
-
-pipeline {
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '6'))
-    }
-    agent any
-    stages {
-        stage('parallel stage') {
-            steps {
-                script {
-                    def job = ["dir1 build", "dir1 docker push", "dir2 build", "dir2 docker push", "dir3 build", "dir3 docker push", "dir4 build", "dir4 docker push", "dir5 build", "dir5 docker push"]
-                    def parallelStagesMap = job.collectEntries {
-                        ["${it}" : generateStage(it)]
-                    }
-                    parallel parallelStagesMap
                 }
             }
         }

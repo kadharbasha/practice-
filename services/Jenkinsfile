@@ -5,14 +5,11 @@ pipeline {
       steps {
         script {
           def filelist = getChangedFilesList() // List of filenames that have changed
-          /*for(int i=0; i < filelist.size(); i++) {
-            def filename = "${filelist[i]}".split("/")
-            echo "${filename}"
-          }*/
           def parallelStagesMap = filelist.collectEntries {
-              ["${it}" : generateStage(it)]
+              echo "${it}"
+             // ["${it}" : generateStage(it)]
           }
-          parallel parallelStagesMap
+          //parallel parallelStagesMap
         }
       }
     }
@@ -26,9 +23,7 @@ def getChangedFilesList() {
     for (changeLogSet in currentBuild.changeSets) {
       for (entry in changeLogSet.getItems()) { // for each commit in the detected changes
         for (file in entry.getAffectedFiles()) {
-          def filename = "file.getPath().split("/");
-            //print ("${filename[1]}")
-          changedFiles.add(filename[1]) // add changed file to list
+          changedFiles.add(file.getPath()) // add changed file to list
         }
       }
     }

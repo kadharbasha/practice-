@@ -6,8 +6,10 @@ pipeline {
         script {
           def filelist = getChangedFilesList() // List of filenames that have changed
 		echo "${filelist}"
-		def filename = "${filelist[0]}".split("/") //Returns the list of files having the yaml file extension from the filelist ArrayList
+		for(int i=0; i < filelist.size(); i++) {
+		def filename = "${filelist[i]}".split("/") //Returns the list of files having the yaml file extension from the filelist ArrayList
 		echo "${filename[1]}" //<filename>.yaml
+		}
         }
       }
     }

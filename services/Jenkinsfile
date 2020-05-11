@@ -11,6 +11,7 @@ pipeline {
             echo "${serName}"
             ["${serName}" : generateStage1(serName)]
             ["${serName}" : generateStage2(serName)]
+            ["${serName}" : generateStage3(serName)]
           }
           parallel parallelStagesMap
         }
@@ -28,6 +29,14 @@ def generateStage1(serv) {
 }
 
 def generateStage2(serv) {
+  return {
+    stage("${serv} docker push"){
+        sh "echo docker"
+    }
+  }
+}
+
+def generateStage3(serv) {
   return {
     stage("${serv} docker push"){
         sh "echo docker"

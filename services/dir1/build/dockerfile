@@ -5,7 +5,7 @@ FROM golang:1.13.4-alpine as staging
 
 RUN mkdir test01
 RUN mkdir test14
-RUN mkdir test23
+RUN mkdir test25
 RUN mkdir test37
 RUN mkdir test45
 

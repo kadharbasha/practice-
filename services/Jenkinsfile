@@ -25,22 +25,23 @@ pipeline {
 def generateStage(serv) {
     return {
         stage("${serv}"){
+        	def jname ="${serv}"
+            def secName = jname.split(" ")
 	        def filelist = getChangedFilesList() // List of filenames that have changed
 	    	echo "${filelist}"
 	    	for(int i=0; i < filelist.size(); i++) {
 		    	def filename = "${filelist[i]}".split("/")
 		    	echo "${filename[1]}" //<filename>.yaml
-		    }
-            def jname ="${serv}"
-            def secName = jname.split(" ")
-            matches = sh (
+		    //}
+            
+           /* matches = sh (
                 script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[0]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[0]}", returnStatus: true
             ) == 0
             if (isMyDirChanged()) {
 			  	print ('Building')
-			}
+			}*/
             if("${secName[1]}"=="build"){
-                if("$matches"!="false"){
+                if("${filename[1]}"=="${secName[0]}"){
                     dir ("services/${secName[0]}"){
                         sh "docker build -f build/dockerfile ."
                         echo "${BRANCH_NAME}"
@@ -48,7 +49,7 @@ def generateStage(serv) {
                 }
             }
             if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev")){
-                if("$matches"!="true"){
+                if("${filename[1]}"=="${secName[0]}"){
                     def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                     def map = [
                         dir1: "1.0.0", 
@@ -79,6 +80,7 @@ def generateStage(serv) {
                        }
                     }
                 }
+            }
             }
         }
     }

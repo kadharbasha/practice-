@@ -9,7 +9,7 @@ pipeline {
           def directoryName = "${it}".split("/")
           def serName = ["${directoryName[1]} build", "${directoryName[1]} docker push"]
             def parallelStagesMap2 = serName.collectEntries {
-              ["${serName}" : generateStage(serName)]
+              ["${it}" : generateStage(it)]
             }
           }
           parallel parallelStagesMap1

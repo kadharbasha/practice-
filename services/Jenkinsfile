@@ -30,7 +30,7 @@ def generateStage1(serv) {
 
 def generateStage2(serv) {
   return {
-    stage("${serv} docker push"){
+    stage("${serv} docker push1"){
         sh "echo docker"
     }
   }
@@ -38,8 +38,8 @@ def generateStage2(serv) {
 
 def generateStage3(serv) {
   return {
-    stage("${serv} docker push"){
-        sh "echo docker"
+    stage("${serv} docker push2"){
+        sh "echo docker2"
     }
   }
 }

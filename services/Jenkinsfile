@@ -20,8 +20,12 @@ pipeline {
 
 def generateStage(serv) {
     return {
-        stage("${serv}"){
-          echo "${serv}"
+        stage("${serv} build"){
+          echo "$serv"
+        }
+        if("${serv}"=="Jenkinsfile")
+        stage("${serv} docker push"){
+          echo "$serv docker push Jenkinsfile"
         }
     }
 }

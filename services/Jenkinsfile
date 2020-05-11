@@ -1,101 +1,24 @@
-#!/usr/bin/env groovy
-def tagname
-def tagnumber
-
 pipeline {
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '6'))
-    }
-    agent any
-    stages {
-        stage('parallel stage') {
-            steps {
-                script {
-                    def job = ["dir1 build", "dir1 docker push", "dir2 build", "dir2 docker push", "dir3 build", "dir3 docker push", "dir4 build", "dir4 docker push", "dir5 build", "dir5 docker push"]
-                    def parallelStagesMap = job.collectEntries {
-                    	
-                    	def filelist = getChangedFilesList() // List of filenames that have changed
-				    	echo "${filelist}"
-				    	for(int i=0; i < filelist.size(); i++) {
-					    	def filename = "${filelist[i]}".split("/")
-					    	echo "${filename[1]}"
-					    	def tname ="${it}"
-            				def secNamet = tname.split(" ")
-					    	if("${filename[1]}"=="${secNamet[0]}"){
-                        		["${it}" : generateStage(it)]
-                        	}
-                        }
-                    }
-                    parallel parallelStagesMap
-                }
-            }
+  agent any
+  stages {
+    stage('Clone sources') {
+      steps {
+        script {
+          def filelist = getChangedFilesList() // List of filenames that have changed
+          /*for(int i=0; i < filelist.size(); i++) {
+            def filename = "${filelist[i]}".split("/")
+            echo "${filename}"
+          }*/
+          def parallelStagesMap = filelist.collectEntries {
+              ["${it}" : generateStage(it)]
+          }
+          parallel parallelStagesMap
         }
+      }
     }
+  }
 }
 
-def generateStage(serv) {
-    return {
-        stage("${serv}"){
-        	def jname ="${serv}"
-            def secName = jname.split(" ")
-	        //def filelist = getChangedFilesList() // List of filenames that have changed
-	    	//echo "${filelist}"
-	    	//for(int i=0; i < filelist.size(); i++) {
-		    	def filename = "${filelist[i]}".split("/")
-		    	echo "${filename[1]}" //<filename>.yaml
-		    //}
-            
-           /* matches = sh (
-                script: "git diff --name-only HEAD~1..HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[0]} || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[0]}", returnStatus: true
-            ) == 0
-            if (isMyDirChanged()) {
-			  	print ('Building')
-			}*/
-            if("${secName[1]}"=="build"){
-                //if("${filename[1]}"=="${secName[0]}"){
-                    dir ("services/${secName[0]}"){
-                        sh "docker build -f build/dockerfile ."
-                        echo "${BRANCH_NAME}"
-                    }
-                //}
-            }
-            if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev")){
-                //if("${filename[1]}"=="${secName[0]}"){
-                    def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                    def map = [
-                        dir1: "1.0.0", 
-                        dir2: "2.0.1", 
-                        dir3: "3.2.1",
-                        dir4: "1.2.3",
-                        dir5: "4.5.6"
-                    ]
-                    for (def key in map.keySet()) {
-                        if("${key}" == "${noSpec}"){
-                            tagname = "${key}"
-                            tagnumber = "${map[key]}"
-                            break
-                        }
-                    }
-                    if(("${secName[0]}"!="dir4") && ("${secName[0]}"!="dir5")) {
-                        dir ("services/${secName[0]}"){
-                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
-                            sh "docker images"
-                        }
-                    }
-                    else{
-                       dir ("services/${secName[0]}"){
-                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                           sh "docker images"
-                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                           sh "docker images"
-                       }
-                    }
-                //}
-            }
-           // }
-        }
-    }
-}
 
 @NonCPS
 def getChangedFilesList() {
@@ -103,7 +26,9 @@ def getChangedFilesList() {
     for (changeLogSet in currentBuild.changeSets) {
       for (entry in changeLogSet.getItems()) { // for each commit in the detected changes
         for (file in entry.getAffectedFiles()) {
-          changedFiles.add(file.getPath()) // add changed file to list
+          def filename = "file.getPath().split("/")
+            //print ("${filename[1]}")
+          changedFiles.add(filename[1]) // add changed file to list
         }
       }
     }

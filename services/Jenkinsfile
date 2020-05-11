@@ -1,45 +1,48 @@
+#!/usr/bin/env groovy
+def tagname
+def tagnumber
+
 pipeline {
-  agent any
-  stages {
-    stage('Clone sources') {
-      steps {
-        script {
-          def filelist = getChangedFilesList() // List of filenames that have changed
-          def parallelStagesMap = filelist.collectEntries {
-          def directoryName = "${it}".split("/")
-          def serName = "${directoryName[1]}"
-            echo "${serName}"
-            ["${serName}" : generateStage1(serName)]
-            ["${serName}" : generateStage2(serName)]
-            ["${serName}" : generateStage3(serName)]
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '6'))
+    }
+    agent any
+    stages {
+        stage('parallel stage') {
+            steps {
+                script {
+                    def job = ["dir1 build", "dir1 docker push", "dir2 build", "dir2 docker push", "dir3 build", "dir3 docker push", "dir4 build", "dir4 docker push", "dir5 build", "dir5 docker push"]
+                    def parallelStagesMap = job.collectEntries {
+                        ["${it}" : generateStage(it)]
+                    }
+                    parallel parallelStagesMap
+                }
+            }
+        }
+    }
+}
+
+def generateStage(serv) {
+  return {
+    def jname ="${serv}"
+    def secName = jname.split(" ")
+    echo "${secName[0]}"
+    def filelist = getChangedFilesList() // List of filenames that have changed
+    echo "${filelist}"
+    for(int i=0; i < filelist.size(); i++) {
+      def filename = "${filelist[i]}".split("/")
+      echo "${filename[1]}" 
+      if("${filename[1]}" == ${secName[0]}){
+        echo "${filelist[i]}"
+        stage("${serv}"){
+          if("${secName[1]}"=="build"){
+            echo "build job"
           }
-          parallel parallelStagesMap
+          if("${secName[1]}"=="docker"){
+            echo "docker push job"
+          }
         }
       }
-    }
-  }
-}
-
-def generateStage1(serv) {
-  return {
-    stage("${serv} build"){
-        sh "echo build"
-    }
-  }
-}
-
-def generateStage2(serv) {
-  return {
-    stage("${serv} docker push1"){
-        sh "echo docker"
-    }
-  }
-}
-
-def generateStage3(serv) {
-  return {
-    stage("${serv} docker push2"){
-        sh "echo docker2"
     }
   }
 }

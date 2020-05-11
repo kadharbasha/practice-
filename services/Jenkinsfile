@@ -24,17 +24,17 @@ pipeline {
 
 def generateStage(serv) {
   return {
-    def jname ="${serv}"
-    def secName = jname.split(" ")
-    echo "${secName[0]}"
-    def filelist = getChangedFilesList() // List of filenames that have changed
-    echo "${filelist}"
-    for(int i=0; i < filelist.size(); i++) {
-      def filename = "${filelist[i]}".split("/")
-      echo "${filename[1]}" 
-      if("${filename[1]}" == ${secName[0]}){
-        echo "${filelist[i]}"
-        stage("${serv}"){
+    stage("${serv}"){
+      def jname ="${serv}"
+      def secName = jname.split(" ")
+      echo "${secName[0]}"
+      def filelist = getChangedFilesList() // List of filenames that have changed
+      echo "${filelist}"
+      for(int i=0; i < filelist.size(); i++) {
+        def filename = "${filelist[i]}".split("/")
+        echo "${filename[1]}" 
+        if("${filename[1]}" == ${secName[0]}){
+          echo "${filelist[i]}"
           if("${secName[1]}"=="build"){
             echo "build job"
           }

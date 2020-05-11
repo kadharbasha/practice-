@@ -6,8 +6,9 @@ pipeline {
         script {
           def filelist = getChangedFilesList() // List of filenames that have changed
           def parallelStagesMap = filelist.collectEntries {
-              echo "${it}"
-             // ["${it}" : generateStage(it)]
+          def directoryName = "${it}".split("/")
+            echo "${directoryName[1]}"
+             // ["${filenfilename[1]}" : generateStage(it)]
           }
           //parallel parallelStagesMap
         }

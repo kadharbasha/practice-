@@ -20,7 +20,7 @@ pipeline {
 					    	def filename = "${filelist[i]}".split("/")
 					    	echo "${filename[1]}"
 					    	def tname ="${it}"
-            				def secNamet = jname.split(" ")
+            				def secNamet = tname.split(" ")
 					    	if("${filename[1]}"=="${secNamet[0]}"){
                         		["${it}" : generateStage(it)]
                         	}

@@ -5,32 +5,32 @@ pipeline {
       steps {
         script {
           def filelist = getChangedFilesList() // List of filenames that have changed
-          def parallelStagesMap1 = filelist.collectEntries {
+          def parallelStagesMap = filelist.collectEntries {
           def directoryName = "${it}".split("/")
-          def serName = ["${directoryName[1]} build", "${directoryName[1]} docker push"]
-            def parallelStagesMap2 = serName.collectEntries {
-              ["${it}" : generateStage(it)]
-            }
+          def serName = "${directoryName[1]}"
+            echo "${serName}"
+            ["${serName}" : generateStage1(serName)]
+            ["${serName}" : generateStage2(serName)]
           }
-          parallel parallelStagesMap1
-          parallel parallelStagesMap2
+          parallel parallelStagesMap
         }
       }
     }
   }
 }
 
-def generateStage(serv) {
+def generateStage1(serv) {
   return {
-    stage("${serv}"){
-      def jname ="${serv}"
-      def secName = jname.split(" ")
-      if("${secName[1]}"=="build"){
+    stage("${serv} build"){
         sh "echo build"
-      }
-      if("${secName[1]}"=="docker"){
+    }
+  }
+}
+
+def generateStage2(serv) {
+  return {
+    stage("${serv} docker push"){
         sh "echo docker"
-      }
     }
   }
 }

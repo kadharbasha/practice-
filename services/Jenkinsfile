@@ -6,7 +6,7 @@ pipeline {
         script {
           def filelist = getChangedFilesList() // List of filenames that have changed
 		echo "${filelist}"
-          def filename = filelist.split("\/") //Returns the list of files having the yaml file extension from the filelist ArrayList
+          def filename = filelist.split("/") //Returns the list of files having the yaml file extension from the filelist ArrayList
           echo "${filename}" //<filename>.yaml
         }
       }

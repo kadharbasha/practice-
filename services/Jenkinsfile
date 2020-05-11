@@ -13,12 +13,15 @@ pipeline {
                 script {
                     def job = ["dir1 build", "dir1 docker push", "dir2 build", "dir2 docker push", "dir3 build", "dir3 docker push", "dir4 build", "dir4 docker push", "dir5 build", "dir5 docker push"]
                     def parallelStagesMap = job.collectEntries {
+                    	
                     	def filelist = getChangedFilesList() // List of filenames that have changed
 				    	echo "${filelist}"
 				    	for(int i=0; i < filelist.size(); i++) {
 					    	def filename = "${filelist[i]}".split("/")
 					    	echo "${filename[1]}"
-					    	if("${filename[1]}"=="${secName[0]}"){
+					    	def tname ="${it}"
+            				def secNamet = jname.split(" ")
+					    	if("${filename[1]}"=="${secNamet[0]}"){
                         		["${it}" : generateStage(it)]
                         	}
                         }
@@ -88,8 +91,8 @@ def generateStage(serv) {
                        }
                     }
                 //}
-           // }
             }
+           // }
         }
     }
 }

@@ -36,10 +36,41 @@ def generateStage(serv) {
         echo "${filelist[i]}"
         stage("${serv}"){
           if("${secName[1]}"=="build"){
-            echo "build job"
+            dir ("services/${secName[0]}"){
+              sh "docker build -f build/dockerfile ."
+              echo "${BRANCH_NAME}"
+            }
           }
           if("${secName[1]}"=="docker"){
-            echo "docker push job"
+            def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+            def map = [
+                dir1: "1.0.0", 
+                dir2: "2.0.1", 
+                dir3: "3.2.1",
+                dir4: "1.2.3",
+                dir5: "4.5.6"
+            ]
+            for (def key in map.keySet()) {
+                if("${key}" == "${noSpec}"){
+                    tagname = "${key}"
+                    tagnumber = "${map[key]}"
+                    break
+                }
+            }
+            if(("${secName[0]}"!="dir4") && ("${secName[0]}"!="dir5")) {
+                dir ("services/${secName[0]}"){
+                    sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+                    sh "docker images"
+                }
+            }
+            else{
+              dir ("services/${secName[0]}"){
+                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                sh "docker images"
+                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                sh "docker images"
+              }
+            }
           }
         }
       }

@@ -9,15 +9,22 @@ pipeline {
           def directoryName = "${it}".split("/")
           def serName = "${directoryName[1]}"
             echo "${serName}"
-             // ["${directoryName[1]}" : generateStage(it)]
+            ["${serName}" : generateStage(serName)]
           }
-          //parallel parallelStagesMap
+          parallel parallelStagesMap
         }
       }
     }
   }
 }
 
+def generateStage(serv) {
+    return {
+        stage("${serv}"){
+          echo "${serv}"
+        }
+    }
+}
 
 @NonCPS
 def getChangedFilesList() {

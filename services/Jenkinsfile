@@ -29,7 +29,7 @@ pipeline {
                                 matches2 = sh (
                                     script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
                                 ) == 0
-                                if("$matches2"!="true"){
+                                if("$matches2"!="false"){
                                 	if(("$list[i]"=="dir4") || ("$list[i]"=="dir5")){
 	                                    stage(list[i] + 'v2 build'){
 	                                        dir ("services/${list[i]}/v2/build") {

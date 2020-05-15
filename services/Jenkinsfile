@@ -30,34 +30,36 @@ pipeline {
                                     script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2' || git diff-tree --no-commit-id --name-only -r HEAD | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
                                 ) == 0
                                 if("$matches2"!="true"){
-                                    stage(list[i] + 'v2 build'){
-                                        dir ("services/${list[i]}/v2/build") {
-                                            sh "ls -la"
-                                            echo "${BRANCH_NAME}"
-                                        }
+                                	if(("$list[i]"=="dir4") || ("$list[i]"=="dir5")){
+	                                    stage(list[i] + 'v2 build'){
+	                                        dir ("services/${list[i]}/v2/build") {
+	                                            sh "ls -la"
+	                                            echo "${BRANCH_NAME}"
+	                                        }
+	                                    }
+	                                    //if("${BRANCH_NAME}" == "dev"){
+	                                        stage(list[i] + 'v2  docker push'){
+	                                            def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+	                                            echo "${noSpec}v2" 
+	                                            for (element in map) {
+	                                                if("${element.key}" == "${noSpec}v2"){
+	                                                    tagname = "${element.key}"
+	                                                    echo "$tagname"
+	                                                    tagnumber = "${element.value}"
+	                                                    echo "$tagname"
+	                                                    break
+	                                                }
+	                                            }
+	                                            dir ("services/${list[i]}/v2/build") {
+	                                                sh "docker images"
+	                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+	                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+	                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+	                                               sh "docker images"
+	                                           }
+	                                        }
+	                                    //}
                                     }
-                                    //if("${BRANCH_NAME}" == "dev"){
-                                        stage(list[i] + 'v2  docker push'){
-                                            def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                                            echo "${noSpec}v2" 
-                                            for (element in map) {
-                                                if("${element.key}" == "${noSpec}v2"){
-                                                    tagname = "${element.key}"
-                                                    echo "$tagname"
-                                                    tagnumber = "${element.value}"
-                                                    echo "$tagname"
-                                                    break
-                                                }
-                                            }
-                                            dir ("services/${list[i]}/v2/build") {
-                                                sh "docker images"
-                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
-                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                                               sh "docker images"
-                                           }
-                                        }
-                                    //}
                                 }
                             }
                         }

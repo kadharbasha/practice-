@@ -31,7 +31,7 @@ pipeline {
                                 ) == 0
                                 echo "$matches2"
                                 echo "${list[i]}"
-                                if("$matches2"!="true"){
+                                if(("$matches2"!="true") && (("${list[i]}"=="dir4") || ("${list[i]}"=="dir5"))){
                                 	//if(("$list[i]"=="dir4") || ("$list[i]"=="dir5")){
 	                                    stage(list[i] + 'v2 build'){
 	                                        dir ("services/${list[i]}/v2/build") {

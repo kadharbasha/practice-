@@ -34,7 +34,7 @@ pipeline {
                                 if(("$matches2"!="true") && (("${list[i]}"=="dir4") || ("${list[i]}"=="dir5"))){
                                 	//if(("$list[i]"=="dir4") || ("$list[i]"=="dir5")){
 	                                    stage(list[i] + 'v2 build'){
-	                                        dir ("services/${list[i]}/v2/build") {
+	                                        dir ("services/${list[i]}/v2") {
 	                                            sh "ls -la"
 	                                            echo "${BRANCH_NAME}"
 	                                        }
@@ -52,7 +52,7 @@ pipeline {
 	                                                    break
 	                                                }
 	                                            }
-	                                            dir ("services/${list[i]}/v2/build") {
+	                                            dir ("services/${list[i]}/v2") {
 	                                                sh "docker images"
 	                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
 	                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."

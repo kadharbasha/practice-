@@ -6,9 +6,9 @@ def map = [
     dir2: "2.0.1", 
     dir3: "3.2.1",
     dir4: "1.2.3",
-    dir4V2: "1.2.3",
-    dir5: "4.5.6"
-    dir5V2: "1.2.3",
+    dir4v2: "1.2.3",
+    dir5: "4.5.6",
+    dir5v2: "1.2.3"
 ]
 def tagname
 def tagnumber

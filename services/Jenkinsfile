@@ -62,15 +62,16 @@ def v2dir = "${secName[0]}".toString().replaceAll("v2","")
 
             if("$matches"!="false"){
                 if("${secName[1]}"=="build"){
-                    script {
+                    //script {
                         //def root = tool name: 'maxapigo', type: 'go'
                         //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
                             dir ("services/${secName[0]}/cmd") {
+                                sh "la -ls"
                                 //sh "go clean -modcache"
                                 //sh "go build main.go"
                             }
-                        }
-                    }
+                        //}
+                    }//
                     dir ("services/${secName[0]}"){
                         sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/Dockerfile ."
                     }
@@ -123,7 +124,7 @@ def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                 def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                 echo "${v2dir}"
                 if("${secName[1]}"=="build"){
-                    script {
+                    //script {
                         //def root = tool name: 'maxapigo', type: 'go'
                         //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
                             dir ("services/${v2dir}/v2/cmd") {
@@ -131,8 +132,8 @@ def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                                 //sh "go clean -modcache"
                                 //sh "go build main.go"
                             }
-                        }
-                    }
+                        //}
+                    //}
                     dir ("services/${v2dir}/v2"){
                         sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/Dockerfile ."
                     }

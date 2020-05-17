@@ -97,7 +97,7 @@ def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                         }
                     }
                     if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
-                        dir ("services/${secName[0]}"){
+                        dir ("services/${v2dir}"){
                             sh "docker images"
                             sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
                             sh "docker images"

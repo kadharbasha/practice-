@@ -87,7 +87,9 @@ def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                         dir4: "1.2.3",
                         dir4v2: "1.2.3",
                         dir5: "4.5.6",
-                        dir5v2: "1.2.3"
+                        dir5v2: "1.2.3",
+                        dir6: "7.8.9",
+                        dir7: "6.8.7"
                     ]
                     for (def key in map.keySet()) {
                         if("${key}" == "${noSpec}"){
@@ -150,6 +152,8 @@ def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                         dir4v2: "1.2.3",
                         dir5: "4.5.6",
                         dir5v2: "1.2.3"
+                        dir6: "7.8.9",
+                        dir7: "6.8.7"
                     ]
                     for (def key in map.keySet()) {
                         if("${key}" == "${noSpec}"){

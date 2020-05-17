@@ -66,7 +66,7 @@ def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                         //def root = tool name: 'maxapigo', type: 'go'
                         //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
                             dir ("services/${secName[0]}/cmd") {
-                                sh "la -ls"
+                                sh "ls -ll"
                                 //sh "go clean -modcache"
                                 //sh "go build main.go"
                             }
@@ -137,7 +137,7 @@ def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                         //}
                     //}
                     dir ("services/${v2dir}/v2"){
-                        sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/Dockerfile ."
+                        sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
                     }
                 }
             

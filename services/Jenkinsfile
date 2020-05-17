@@ -52,7 +52,7 @@ pipeline {
 
 def generateStage(serv) {
     return {
-        stage("${serv}") {
+        //stage("${serv}") {
             jname ="${serv}"
             secName = jname.split(" ")
             v2dir = "${secName[0]}".toString().replaceAll("v2","")
@@ -60,6 +60,7 @@ def generateStage(serv) {
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${v2dir}", returnStatus: true
             ) == 0
             if("$matches"!="false"){
+                stage("${serv}") {
                 if("${secName[1]}"=="build"){
                     //script {
                         //def root = tool name: 'maxapigo', type: 'go'
@@ -113,6 +114,7 @@ def generateStage(serv) {
                        }
                     }
                 }
+                }
             }
             //def jname ="${serv}"
             //def secName = jname.split(" ")
@@ -121,6 +123,7 @@ def generateStage(serv) {
             ) == 0  
             if(("$matchesv2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
                 //def v2dir = "${secName[0]}".toString().replaceAll("v2","")
+                stage("${serv}") {
                 if("${secName[1]}"=="build"){
                     //script {
                         //def root = tool name: 'maxapigo', type: 'go'
@@ -165,8 +168,9 @@ def generateStage(serv) {
                         sh "docker images"
                     }
                 }
+                }
             }
-        }
+        //}
     }
 }
     

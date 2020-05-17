@@ -119,8 +119,8 @@ def generateStage(serv) {
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
             ) == 0  
             if(("$matchesv2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
-                //def v2dir = "${secName[0]}".toString().replaceAll("v2","")
-                //echo "${v2dir}"
+                def v2dir = "${secName[0]}".toString().replaceAll("v2","")
+                echo "${v2dir}"
                 if("${secName[1]}"=="build"){
                     script {
                         //def root = tool name: 'maxapigo', type: 'go'

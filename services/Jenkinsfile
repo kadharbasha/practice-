@@ -56,12 +56,14 @@ def generateStage(serv) {
             jname ="${serv}"
             secName = jname.split(" ")
             v2dir = "${secName[0]}".toString().replaceAll("v2","")
-            matches = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${v2dir}", returnStatus: true
-            ) == 0
-            if("$matches"!="false"){
+            
+            
                 //stage("${serv}") {
                 if("${secName[1]}"=="build"){
+                matches = sh (
+                   script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${v2dir}", returnStatus: true
+                ) == 0
+                 if("$matches"!="false"){
                     //script {
                         //def root = tool name: 'maxapigo', type: 'go'
                         //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
@@ -118,13 +120,15 @@ def generateStage(serv) {
             }
             //def jname ="${serv}"
             //def secName = jname.split(" ")
-            matchesv2 = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
-            ) == 0  
-            if(("$matchesv2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
-                //def v2dir = "${secName[0]}".toString().replaceAll("v2","")
+            
+            //def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                 //stage("${serv}") {
                 if("${secName[1]}"=="build"){
+                 matchesv2 = sh (
+                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
+                 ) == 0  
+                 if(("$matchesv2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
+                
                     //script {
                         //def root = tool name: 'maxapigo', type: 'go'
                         //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {

@@ -76,7 +76,8 @@ def generateStage(serv) {
                     }
                 }
 
-                //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev")){
+                //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
+                if(("${secName[1]}"=="docker"){
                     def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                     def map = [
                         dir1: "1.0.0", 
@@ -109,7 +110,7 @@ def generateStage(serv) {
                            sh "docker images"
                        }
                     }
-                //}
+                }
             }
 
             if(("$matches2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){

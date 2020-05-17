@@ -52,7 +52,8 @@ def generateStage(serv) {
         stage("${serv}") {
             def jname ="${serv}"
             def secName = jname.split(" ")
-
+def v2dir = "${secName[0]}".toString().replaceAll("v2","")
+                echo "${v2dir}"
             matches = sh (
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[0]}", returnStatus: true
             ) == 0

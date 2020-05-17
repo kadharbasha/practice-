@@ -125,14 +125,14 @@ def generateStage(serv) {
                     script {
                         //def root = tool name: 'maxapigo', type: 'go'
                         //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
-                            dir ("services/${secName[0]}/cmd") {
+                            dir ("services/${v2dir}/v2/cmd") {
                                 sh "ls -la"
                                 //sh "go clean -modcache"
                                 //sh "go build main.go"
                             }
                         }
                     }
-                    dir ("services/${secName[0]}/v2"){
+                    dir ("services/${v2dir}/v2"){
                         sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/Dockerfile ."
                     }
                 }
@@ -156,7 +156,7 @@ def generateStage(serv) {
                             break
                         }
                     }
-                    dir ("services/${secName[0]}/v2"){
+                    dir ("services/${v2dir}/v2"){
                         sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
                         sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
                         sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."

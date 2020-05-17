@@ -114,7 +114,7 @@ def generateStage(serv) {
                 }
             }
 
-            if(("$matches2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
+            if(("$matchesv2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
                 def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                 echo "${v2dir}"
                 if("${secName[1]}"=="build"){

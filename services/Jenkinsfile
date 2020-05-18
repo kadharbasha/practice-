@@ -2,22 +2,17 @@
 
 def tagname
 def tagnumber
-def jname
-def secName
-def v2dir
 
 pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '6'))
     }
-    //agent { label 'go-mgmt-slave'}
-    agent any
+    agent { label 'go-mgmt-slave'}
     stages {
         stage('parallel stage') {
             steps {
                 script {
-                    def job = [
-                    "dir1 build", 
+                    def job = ["dir1 build", 
                     "dir1 docker push", 
                     "dir2 build",
                     "dir2 docker push", 
@@ -52,32 +47,33 @@ pipeline {
 
 def generateStage(serv) {
     return {
-        stage("${serv}") {
-            jname ="${serv}"
-            secName = jname.split(" ")
+        stage("${serv}"){
+            def jname ="${serv}"
+            def secName = jname.split(" ")
             matches = sh (
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[0]}", returnStatus: true
             ) == 0
-            if("${matches}"){
-                if("${secName[1]}"=="build"){
-                    //script {
-                        //def root = tool name: 'maxapigo', type: 'go'
-                        //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
-                            //dir ("services/${secName[0]}/cmd")
-                            dir ("services/${secName[0]}") {
-                                sh "ls -ll"
-                                //sh "go clean -modcache"
-                                //sh "go build main.go"
+            if("${secName[1]}"=="build"){
+                if("$matches"!="false"){
+                    script {
+                        /*def root = tool name: 'maxapigo', type: 'go'
+                        withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
+                            dir ("services/${secName[0]}/cmd") {
+                                sh "go clean -modcache"
+                                sh "go build main.go"
                             }
-                        //}
-                    //}
+                        }*/
+                        dir ("services/${secName[0]}"){
+                            sh "ls -la"
+                        }
+                    }
                     dir ("services/${secName[0]}"){
                         sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/Dockerfile ."
                     }
                 }
-
-                //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
-                if("${secName[1]}"=="docker"){
+            }
+            //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev")){
+                if("$matches"!="false"){
                     def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                     def map = [
                         dir1: "1.0.0", 
@@ -86,59 +82,7 @@ def generateStage(serv) {
                         dir4: "1.2.3",
                         dir5: "4.5.6",
                         dir6: "7.8.9",
-                        dir7: "6.8.7"
-                    ]
-                    for (def key in map.keySet()) {
-                        if("${key}" == "${noSpec}"){
-                            tagname = "${key}"
-                            tagnumber = "${map[key]}"
-                            break
-                        }
-                    }
-                    if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
-                        dir ("services/${secName[0]}"){
-                            sh "docker images"
-                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
-                            sh "docker images"
-                        }
-                    }
-                    else{
-                       dir ("services/${secName[0]}"){
-                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                           sh "docker images"
-                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                           sh "docker images"
-                       }
-                    }
-                }
-                //}
-            }
-            matchesv2 = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
-            ) == 0  
-            if("${matchesv2}" && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
-                v2dir = "${secName[0]}".toString().replaceAll("v2","")
-                if("${secName[1]}"=="build"){
-                    //script {
-                        //def root = tool name: 'maxapigo', type: 'go'
-                        //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
-                            //dir ("services/${v2dir}/v2/cmd") 
-                            dir ("services/${v2dir}/v2"){
-                                sh "ls -la"
-                                //sh "go clean -modcache"
-                                //sh "go build main.go"
-                            }
-                        //}
-                    //}
-                    dir ("services/${v2dir}/v2"){
-                        sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
-                    }
-                }
-            
-                //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
-                if("${secName[1]}"=="docker"){
-                    def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                    def map = [
+                        dir7: "6.8.7",
                         dir4v2: "1.2.3",
                         dir5v2: "1.2.3"
                     ]
@@ -149,15 +93,27 @@ def generateStage(serv) {
                             break
                         }
                     }
-                    dir ("services/${v2dir}/v2"){
-                        sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
-                        sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                        sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                        sh "docker images"
+                    //if(("${secName[0]}"!="usermanagement") && ("${secName[0]}"!="websocketv2"))
+                    if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
+                        dir ("services/${secName[0]}"){
+                            sh "docker images"
+                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+                            sh "docker images"
+                        }
+                    }
+                    else{
+                       dir ("services/${secName[0]}"){
+                            /*if("${secName[0]}"!="websocketv2"){
+                                tagname = websocket
+                            }*/
+                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                           sh "docker images"
+                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                           sh "docker images"
+                       }
                     }
                 }
-                //}
-            }
+            //}
         }
     }
 }

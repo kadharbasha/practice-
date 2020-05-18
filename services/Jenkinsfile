@@ -55,19 +55,17 @@ def generateStage(serv) {
         stage("${serv}") {
             jname ="${serv}"
             secName = jname.split(" ")
-            v2dir = "${secName[0]}".toString().replaceAll("v2","")
-            
-            
+            matches = sh (
+                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${secName[0]}", returnStatus: true
+            ) == 0
+            if(("$matches"!="false") && (("${secName[0]}"!="dir4v2") || ("${secName[0]}"!="dir5v2"))){
                 //stage("${serv}") {
                 if("${secName[1]}"=="build"){
-                matches = sh (
-                   script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${v2dir}", returnStatus: true
-                ) == 0
-                 if("$matches"!="false"){
                     //script {
                         //def root = tool name: 'maxapigo', type: 'go'
                         //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
-                            dir ("services/${secName[0]}/cmd") {
+                            dir ("services/${secName[0]}/cmd")
+                            dir ("services/${secName[0]}") {
                                 sh "ls -ll"
                                 //sh "go clean -modcache"
                                 //sh "go build main.go"
@@ -101,7 +99,7 @@ def generateStage(serv) {
                         }
                     }
                     if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
-                        dir ("services/${v2dir}"){
+                        dir ("services/${secName[0]}"){
                             sh "docker images"
                             sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
                             sh "docker images"
@@ -120,19 +118,19 @@ def generateStage(serv) {
             }
             //def jname ="${serv}"
             //def secName = jname.split(" ")
-            
-            //def v2dir = "${secName[0]}".toString().replaceAll("v2","")
+            matchesv2 = sh (
+                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
+            ) == 0  
+            if(("$matchesv2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
+                //def v2dir = "${secName[0]}".toString().replaceAll("v2","")
                 //stage("${serv}") {
+                v2dir = "${secName[0]}".toString().replaceAll("v2","")
                 if("${secName[1]}"=="build"){
-                 matchesv2 = sh (
-                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
-                 ) == 0  
-                 if(("$matchesv2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
-                
                     //script {
                         //def root = tool name: 'maxapigo', type: 'go'
                         //withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
-                            dir ("services/${v2dir}/v2/cmd") {
+                            //dir ("services/${v2dir}/v2/cmd") 
+                            dir ("services/${v2dir}/v2"){
                                 sh "ls -la"
                                 //sh "go clean -modcache"
                                 //sh "go build main.go"
@@ -177,5 +175,3 @@ def generateStage(serv) {
         }
     }
 }
-    
-

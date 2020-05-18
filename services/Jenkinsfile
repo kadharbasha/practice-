@@ -13,7 +13,8 @@ pipeline {
         stage('parallel stage') {
             steps {
                 script {
-                    def job = ["dir1 build", 
+                    def job = [
+                    "dir1 build", 
                     "dir1 docker push", 
                     "dir2 build",
                     "dir2 docker push", 
@@ -30,7 +31,8 @@ pipeline {
                     "dir6 build", 
                     "dir6 docker push", 
                     "dir7 build", 
-                    "dir7 docker push"]
+                    "dir7 docker push"
+                    ]
                     def parallelStagesMap = job.collectEntries {
                         ["${it}" : generateStage(it)]
                     }

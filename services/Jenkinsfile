@@ -80,6 +80,7 @@ def generateStage(serv) {
                 //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
                 if("${secName[1]}"=="docker"){
                     def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                    echo "noSpec"
                     def map = [
                         dir1: "1.0.0", 
                         dir2: "2.0.1", 

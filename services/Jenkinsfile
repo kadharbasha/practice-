@@ -88,9 +88,7 @@ def generateStage(serv) {
                         dir2: "2.0.1", 
                         dir3: "3.2.1",
                         dir4: "1.2.3",
-                        dir4v2: "1.2.3",
                         dir5: "4.5.6",
-                        dir5v2: "1.2.3",
                         dir6: "7.8.9",
                         dir7: "6.8.7"
                     ]
@@ -149,15 +147,8 @@ def generateStage(serv) {
                 if("${secName[1]}"=="docker"){
                     //def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                     def map = [
-                        dir1: "1.0.0", 
-                        dir2: "2.0.1", 
-                        dir3: "3.2.1",
-                        dir4: "1.2.3",
                         dir4v2: "1.2.3",
-                        dir5: "4.5.6",
-                        dir5v2: "1.2.3",
-                        dir6: "7.8.9",
-                        dir7: "6.8.7"
+                        dir5v2: "1.2.3"
                     ]
                     for (def key in map.keySet()) {
                         if("${key}" == "${noSpec}"){

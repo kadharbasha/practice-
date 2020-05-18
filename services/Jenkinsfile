@@ -7,7 +7,8 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '6'))
     }
-    agent { label 'go-mgmt-slave'}
+    //agent { label 'go-mgmt-slave'}
+    agent any
     stages {
         stage('parallel stage') {
             steps {

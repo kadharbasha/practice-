@@ -60,7 +60,7 @@ def generateStage(serv) {
             ) == 0
             echo "${matches}"
             echo "$matches"
-            if("$matches"!="false"){
+            if("${matches}"!="false"){
                 if("${secName[1]}"=="build"){
                     //script {
                         //def root = tool name: 'maxapigo', type: 'go'
@@ -118,7 +118,7 @@ def generateStage(serv) {
             matchesv2 = sh (
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
             ) == 0  
-            if(("$matchesv2"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
+            if(("${matchesv2}"!="false") && (("${secName[0]}"=="dir5v2") || ("${secName[0]}"=="dir4v2"))){
                 v2dir = "${secName[0]}".toString().replaceAll("v2","")
                 if("${secName[1]}"=="build"){
                     //script {

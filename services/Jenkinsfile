@@ -59,7 +59,7 @@ def generateStage(serv) {
             /*matchesv2 = sh (
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
             ) == 0*/
-            echo "$matches"
+            echo "Matches: $matches"
             /*echo "$matchesv2"*/
             if("${secName[1]}"=="build"){
                 if("$matches"!="false"){
@@ -102,14 +102,14 @@ def generateStage(serv) {
                         if("${key}" == "${noSpec}"){
                             tagname = "${key}"
                             tagnumber = "${map[key]}"
-                            break
+                            //break
                         }
                     }
                     //if(("${secName[0]}"!="usermanagement") && ("${secName[0]}"!="websocketv2"))
                     if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
                         dir ("services/${secName[0]}"){
-                            echo "${tagname}"
-                            echo "${tagnumber}"
+                            echo "Tag Name: ${tagname}"
+                            echo "Tage Number: ${tagnumber}"
                             sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
                             sh "docker images"
                         }

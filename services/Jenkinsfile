@@ -99,8 +99,6 @@ def generateStage(serv) {
                         dir5v2: "1.2.3"
                     ]
                     for (def key in map.keySet()) {
-                        echo "${key}"
-                        echo "${noSpec}"
                         if("${key}" == "${noSpec}"){
                             tagname = "${key}"
                             tagnumber = "${map[key]}"

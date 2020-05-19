@@ -102,7 +102,7 @@ def generateStage(serv) {
                         if("${key}" == "${noSpec}"){
                             tagname = "${key}"
                             tagnumber = "${map[key]}"
-                            sleep(time: 5, unit: "SECONDS")
+                            sleep(time: 60, unit: "SECONDS")
                             break
                         }
                     }

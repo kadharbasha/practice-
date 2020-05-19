@@ -2,6 +2,8 @@
 
 def tagname
 def tagnumber
+def matches
+def matchesv2
 
 pipeline {
     options {

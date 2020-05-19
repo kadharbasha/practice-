@@ -121,10 +121,12 @@ def generateStage(serv) {
                             /*if("${secName[0]}"!="websocketv2"){
                                 tagname = websocket
                             }*/
-                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                           sh "docker images"
-                           sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                           sh "docker images"
+                            echo "${tagname}"
+                            echo "${tagnumber}"
+                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                            sh "docker images"
+                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                            sh "docker images"
                        }
                     }
                 }

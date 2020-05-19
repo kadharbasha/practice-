@@ -5,6 +5,7 @@ def tagnumber
 def matches 
 def matchesv2
 def v2dir
+def redir
 
 pipeline {
     options {
@@ -136,16 +137,17 @@ def generateStage(serv) {
             else{
                 echo "job: ${secName[0]}"
                 sleep(time: 30, unit: "SECONDS")
-                v2dir = "${secName[0]}".toString().replaceAll("v2","")
-                echo "service of v2: ${v2dir}"
+                redir = "${secName[0]}".toString().replaceAll("v2","")
+                echo "service of v2: ${redir}"
                 matchesv2 = sh (
-                    script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${v2dir} && git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
+                    script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${redir} && git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
                 ) == 0
                 echo "Matches of v2: $matchesv2"
-                echo "v2 dir: ${v2dir}"
-                echo "services/${v2dir}/v2"
                 if("${secName[1]}"=="build"){
                     if("$matchesv2"!="false"){
+                        v2dir = "${secName[0]}".toString().replaceAll("v2","")
+                        echo "v2 dir: ${v2dir}"
+                        echo "services/${v2dir}/v2"
                         script {
                             /*def root = tool name: 'maxapigo', type: 'go'
                             withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {

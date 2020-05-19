@@ -129,12 +129,13 @@ def generateStage(serv) {
             }
             
             else{
-                matchesv2 = sh (
-                    script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
-                ) == 0
-                echo "Matches of v2: $matchesv2"
                 echo "job: ${secName[0]}"
                 v2dir = "${secName[0]}".toString().replaceAll("v2","")
+                echo "service of v2: ${v2dir}"
+                matchesv2 = sh (
+                    script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x ${v2dir} && git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
+                ) == 0
+                echo "Matches of v2: $matchesv2"
                 echo "v2 dir: ${v2dir}"
                 echo "services/${v2dir}/v2"
                 if("${secName[1]}"=="build"){

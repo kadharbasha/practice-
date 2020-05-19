@@ -104,7 +104,8 @@ def generateStage(serv) {
                             break
                         }
                     }
-            //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev")){
+            //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
+            if("${secName[1]}"=="docker"){
                 if("$matches"!="false"){
                     //if(("${secName[0]}"!="usermanagement") && ("${secName[0]}"!="websocketv2"))
                     if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
@@ -129,7 +130,7 @@ def generateStage(serv) {
                 /*if("$matchesv2"!="false"){
                   echo "${secName[0]}"
                 }*/
-            //}
+            }
         }
     }
 }

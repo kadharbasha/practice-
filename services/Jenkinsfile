@@ -73,10 +73,12 @@ def generateStage(serv) {
                                 }
                             }*/
                             dir ("services/${secName[0]}"){
+                                sh "pwd"
                                 sh "ls -la"
                             }
                         }
                         dir ("services/${secName[0]}"){
+                            sh "pwd"
                             sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
                         }
                     }
@@ -107,6 +109,7 @@ def generateStage(serv) {
                             dir ("services/${secName[0]}"){
                                 echo "Tag Name: ${tagname}"
                                 echo "Tage Number: ${tagnumber}"
+                                sh "pwd"
                                 sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
                                 sh "docker images"
                             }
@@ -118,8 +121,10 @@ def generateStage(serv) {
                                 }*/
                                 echo "${tagname}"
                                 echo "${tagnumber}"
+                                sh "pwd"
                                 sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
                                 sh "docker images"
+                                sh "pwd"
                                 sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
                                 sh "docker images"
                            }
@@ -130,6 +135,7 @@ def generateStage(serv) {
             
             else{
                 echo "job: ${secName[0]}"
+                sleep(time: 30, unit: "SECONDS")
                 v2dir = "${secName[0]}".toString().replaceAll("v2","")
                 echo "service of v2: ${v2dir}"
                 matchesv2 = sh (
@@ -149,10 +155,12 @@ def generateStage(serv) {
                                 }
                             }*/
                             dir ("services/${v2dir}/v2"){
+                                sh "pwd"
                                 sh "ls -la"
                             }
                         }
                         dir ("services/${v2dir}/v2"){
+                            sh "pwd"
                             sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
                         }
                     }
@@ -176,8 +184,10 @@ def generateStage(serv) {
                            dir ("services/${v2dir}/v2"){
                                 echo "${tagname}"
                                 echo "${tagnumber}"
+                                sh "pwd"
                                 sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
                                 sh "docker images"
+                                sh "pwd"
                                 sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
                                 sh "docker images"
                            }

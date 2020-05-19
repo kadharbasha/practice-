@@ -102,7 +102,8 @@ def generateStage(serv) {
                         if("${key}" == "${noSpec}"){
                             tagname = "${key}"
                             tagnumber = "${map[key]}"
-                            //break
+                            sleep(time: 5, unit: "SECONDS")
+                            break
                         }
                     }
                     //if(("${secName[0]}"!="usermanagement") && ("${secName[0]}"!="websocketv2"))

@@ -83,7 +83,10 @@ def generateStage(serv) {
                   echo "${secName[0]}"
                 }*/
             }
-            def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+            //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
+            if("${secName[1]}"=="docker"){
+                if("$matches"!="false"){
+                    def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                     def map = [
                         dir1: "1.0.0", 
                         dir2: "2.0.1", 
@@ -103,12 +106,9 @@ def generateStage(serv) {
                             tagnumber = "${map[key]}"
                             break
                         }
-                        echo "tagname"
-                        echo "tagnumber"
+                        echo "${tagname}"
+                        echo "${tagnumber}"
                     }
-            //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
-            if("${secName[1]}"=="docker"){
-                if("$matches"!="false"){
                     //if(("${secName[0]}"!="usermanagement") && ("${secName[0]}"!="websocketv2"))
                     if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
                         dir ("services/${secName[0]}"){

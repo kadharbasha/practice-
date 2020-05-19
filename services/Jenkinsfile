@@ -103,6 +103,8 @@ def generateStage(serv) {
                             tagnumber = "${map[key]}"
                             break
                         }
+                        echo "tagname"
+                        echo "tagnumber"
                     }
             //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
             if("${secName[1]}"=="docker"){

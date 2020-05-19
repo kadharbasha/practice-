@@ -4,6 +4,7 @@ def tagname
 def tagnumber
 def matches 
 def matchesv2
+def v2dir
 
 pipeline {
     options {
@@ -61,86 +62,126 @@ def generateStage(serv) {
                 ) == 0
                 echo "Matches: $matches"
                 echo "job: ${secName[0]}"
+                if("${secName[1]}"=="build"){
+                    if("$matches"!="false"){
+                        script {
+                            /*def root = tool name: 'maxapigo', type: 'go'
+                            withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
+                                dir ("services/${secName[0]}/cmd") {
+                                    sh "go clean -modcache"
+                                    sh "go build main.go"
+                                }
+                            }*/
+                            dir ("services/${secName[0]}"){
+                                sh "ls -la"
+                            }
+                        }
+                        dir ("services/${secName[0]}"){
+                            sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
+                        }
+                    }
+                }
+                //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
+                if("${secName[1]}"=="docker"){
+                    if("$matches"!="false"){
+                        def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                        def map = [
+                            dir1: "1.0.0", 
+                            dir2: "2.0.1", 
+                            dir3: "3.2.1",
+                            dir4: "1.2.3",
+                            dir5: "4.5.6",
+                            dir6: "7.8.9",
+                            dir7: "6.8.7",
+                        ]
+                        sleep(time: 30, unit: "SECONDS")
+                        for (def key in map.keySet()) {
+                            if("${key}" == "${noSpec}"){
+                                tagname = "${key}"
+                                tagnumber = "${map[key]}"
+                                break
+                            }
+                        }
+                        //if(("${secName[0]}"!="usermanagement") && ("${secName[0]}"!="websocketv2"))
+                        if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
+                            dir ("services/${secName[0]}"){
+                                echo "Tag Name: ${tagname}"
+                                echo "Tage Number: ${tagnumber}"
+                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+                                sh "docker images"
+                            }
+                        }
+                        else{
+                           dir ("services/${secName[0]}"){
+                                /*if("${secName[0]}"!="websocketv2"){
+                                    tagname = websocket
+                                }*/
+                                echo "${tagname}"
+                                echo "${tagnumber}"
+                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                                sh "docker images"
+                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                                sh "docker images"
+                           }
+                        }
+                    }
+                }
             }
             
             else{
                 matchesv2 = sh (
                     script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$3'} | uniq | grep -x 'v2'", returnStatus: true
                 ) == 0
-                echo "Matches: $matches"
                 echo "Matches of v2: $matchesv2"
-            }
-            
-            if("${secName[1]}"=="build"){
-                if("$matches"!="false"){
-                    script {
-                        /*def root = tool name: 'maxapigo', type: 'go'
-                        withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
-                            dir ("services/${secName[0]}/cmd") {
-                                sh "go clean -modcache"
-                                sh "go build main.go"
-                            }
-                        }*/
-                        dir ("services/${secName[0]}"){
-                            sh "ls -la"
-                        }
-                    }
-                    dir ("services/${secName[0]}"){
-                        sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
-                    }
-                }
-                if("$matchesv2"!="false"){
-                  echo "1st job: ${secName[0]}"
-                }
-            }
-            //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
-            if("${secName[1]}"=="docker"){
-                if("$matches"!="false"){
-                    def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                    def map = [
-                        dir1: "1.0.0", 
-                        dir2: "2.0.1", 
-                        dir3: "3.2.1",
-                        dir4: "1.2.3",
-                        dir5: "4.5.6",
-                        dir6: "7.8.9",
-                        dir7: "6.8.7",
-                        dir4v2: "1.2.3",
-                        dir5v2: "1.2.3"
-                    ]
-                    sleep(time: 30, unit: "SECONDS")
-                    for (def key in map.keySet()) {
-                        if("${key}" == "${noSpec}"){
-                            tagname = "${key}"
-                            tagnumber = "${map[key]}"
-                            break
-                        }
-                    }
-                    //if(("${secName[0]}"!="usermanagement") && ("${secName[0]}"!="websocketv2"))
-                    if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
-                        dir ("services/${secName[0]}"){
-                            echo "Tag Name: ${tagname}"
-                            echo "Tage Number: ${tagnumber}"
-                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
-                            sh "docker images"
-                        }
-                    }
-                    else{
-                       dir ("services/${secName[0]}"){
-                            /*if("${secName[0]}"!="websocketv2"){
-                                tagname = websocket
+                echo "job: ${secName[0]}"
+                v2dir = "${secName[0]}".toString().replaceAll("v2","")
+                echo "v2 dir: ${v2dir}"
+                echo "services/${v2dir}/v2"
+                if("${secName[1]}"=="build"){
+                    if("$matchesv2"!="false"){
+                        script {
+                            /*def root = tool name: 'maxapigo', type: 'go'
+                            withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
+                                dir ("services/${secName[0]}/cmd") {
+                                    sh "go clean -modcache"
+                                    sh "go build main.go"
+                                }
                             }*/
-                            echo "${tagname}"
-                            echo "${tagnumber}"
-                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                            sh "docker images"
-                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                            sh "docker images"
-                       }
+                            dir ("services/${v2dir}/v2"){
+                                sh "ls -la"
+                            }
+                        }
+                        dir ("services/${v2dir}/v2"){
+                            sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
+                        }
                     }
                 }
-                if("$matchesv2"!="false"){
-                  echo "2nd job: ${secName[0]}"
+                //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
+                if("${secName[1]}"=="docker"){
+                    if("$matchesv2"!="false"){
+                        def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                        def map = [
+                            dir4v2: "4.2.1",
+                            dir5v2: "5.2.1"
+                        ]
+                        sleep(time: 30, unit: "SECONDS")
+                        for (def key in map.keySet()) {
+                            if("${key}" == "${noSpec}"){
+                                tagname = "${key}"
+                                tagnumber = "${map[key]}"
+                                break
+                            }
+                        }
+                           dir ("services/${v2dir}/v2"){
+                                echo "${tagname}"
+                                echo "${tagnumber}"
+                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                                sh "docker images"
+                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                                sh "docker images"
+                           }
+                        }
+                    }
                 }
             }
         }

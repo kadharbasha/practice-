@@ -98,11 +98,11 @@ def generateStage(serv) {
                         dir4v2: "1.2.3",
                         dir5v2: "1.2.3"
                     ]
+                    sleep(time: 30, unit: "SECONDS")
                     for (def key in map.keySet()) {
                         if("${key}" == "${noSpec}"){
                             tagname = "${key}"
                             tagnumber = "${map[key]}"
-                            sleep(time: 60, unit: "SECONDS")
                             break
                         }
                     }

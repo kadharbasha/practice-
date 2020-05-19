@@ -170,6 +170,9 @@ def generateStage(serv) {
                 //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
                 if("${secName[1]}"=="docker"){
                     if("$matchesv2"!="false"){
+                        v2dir = "${secName[0]}".toString().replaceAll("v2","")
+                        echo "v2 dir: ${v2dir}"
+                        echo "services/${v2dir}/v2"
                         def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
                         def map = [
                             dir4v2: "4.2.1",

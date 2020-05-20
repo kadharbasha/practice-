@@ -85,7 +85,7 @@ pipeline {
                                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir} v2'", returnStatus: true
                             ) == 0
                             echo "Matchesv2: $matchesv2"
-                            v2dir = "${secName[0]}".toString().replaceAll("v2","")
+                            v2dir = "${list[i]}".toString().replaceAll("v2","")
                             echo "v2 dir: services/${v2dir}/v2"
 
                             if("$matchesv2"!="false"){

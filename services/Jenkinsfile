@@ -85,16 +85,15 @@ pipeline {
                             }
                         }
                         else{
-                            echo "Service: ${list[i]}"
                             redir = "${list[i]}".toString().replaceAll("v2","")
-                            echo "service dir of v2: ${redir}"
                             matchesv2 = sh (
                                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir} v2'", returnStatus: true
                             ) == 0
                             echo "Matchesv2: $matchesv2"
+                            echo "Service: ${list[i]}"
+                            echo "service dir of v2: ${redir}"
                             v2dir = "${list[i]}".toString().replaceAll("v2","")
                             echo "v2 dir: services/${v2dir}/v2"
-
                             if("$matchesv2"!="false"){
                                 stage(list[i] + ' build'){
                                     script{

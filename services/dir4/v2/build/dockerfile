@@ -2,7 +2,7 @@
 FROM golang:1.13.4-alpine as staging
 
 
-RUN mkdir test4v2
+RUN mkdir test16
 RUN mkdir test17
 RUN mkdir test18
 RUN mkdir test19

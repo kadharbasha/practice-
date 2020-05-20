@@ -1,5 +1,17 @@
 #!/usr/bin/env groovy
 
+def list = ["dir1", "dir2", "dir3", "dir4",dir4v2, "dir5", dir5v2, dir6, dir7]
+def map = [
+    dir1: "1.0.0", 
+    dir2: "2.0.1", 
+    dir3: "3.2.1",
+    dir4: "1.2.3",
+    dir5: "4.5.6",
+    dir6: "7.8.9",
+    dir7: "6.8.7",
+    dir4v2: "4.2.1",
+    dir5v2: "5.2.1"
+]
 def tagname
 def tagnumber
 def matches 
@@ -11,36 +23,109 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '6'))
     }
-    //agent { label 'go-mgmt-slave'}
-    agent any
+    agent none
     stages {
-        stage('parallel stage') {
+        stage('Preparing updated services') {
+            agent any
             steps {
                 script {
-                    def job = [
-                    "dir1 build", 
-                    "dir1 docker push", 
-                    "dir2 build",
-                    "dir2 docker push", 
-                    "dir3 build", 
-                    "dir3 docker push", 
-                    "dir4 build", 
-                    "dir4 docker push", 
-                    "dir5 build", 
-                    "dir5 docker push",
-                    "dir4v2 build", 
-                    "dir4v2 docker push", 
-                    "dir5v2 build", 
-                    "dir5v2 docker push", 
-                    "dir6 build", 
-                    "dir6 docker push", 
-                    "dir7 build", 
-                    "dir7 docker push"
-                    ]
-                    def parallelStagesMap = job.collectEntries {
-                        ["${it}" : generateStage(it)]
+                    for(int i=0; i < list.size(); i++) {
+                        if("${list[i]}"!="dir4v2" && "${list[i]}"!="dir5v2"){
+                            matches = sh (
+                                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${list[i]} build'", returnStatus: true
+                            ) == 0
+                            echo "Matches: $matches"
+                            echo "Service: ${list[i]}"
+                            if("$matches"!="false"){
+                                stage(list[i] + ' build'){
+                                    dir ("services/${list[i]}") {
+                                        sh "pwd"
+                                        sh "ls -la"
+                                    }
+                                }
+                                //if("${BRANCH_NAME}" == "dev"){
+                                    stage(list[i] + '  docker push'){
+                                        def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                                        for (element in map) {
+                                            if("${element.key}" == "${noSpec}"){
+                                                tagname = "${element.key}"
+                                                tagnumber = "${element.value}"
+                                                break
+                                            }
+                                        }
+                                        dir ("services/${list[i]}") {
+                                            if(("${list[i]}"!="dir6") && ("${list[i]}"!="dir7")) {
+                                                echo "Tag Name: ${tagname}"
+                                                echo "Tag Number: ${tagnumber}"
+                                                sh "pwd"
+                                                sh "ls -la"
+                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+                                                sh "docker images"
+                                            }
+                                            else{
+                                                echo "Tag Name: ${tagname}"
+                                                echo "Tag Number: ${tagnumber}"
+                                                sh "pwd"
+                                                sh "ls -la"
+                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                                                sh "docker images"
+                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                                                sh "docker images"
+                                            }
+                                        }
+                                    }
+                                //}
+                            }
+                        }
+                        else{
+                            echo "Service: ${list[i]}"
+                            redir = "${list[i]}".toString().replaceAll("v2","")
+                            echo "service dir of v2: ${redir}"
+                            matchesv2 = sh (
+                                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir} v2'", returnStatus: true
+                            ) == 0
+                            echo "Matchesv2: $matchesv2"
+                            v2dir = "${secName[0]}".toString().replaceAll("v2","")
+                            echo "v2 dir: services/${v2dir}/v2"
+
+                            if("$matchesv2"!="false"){
+                                stage(list[i] + ' build'){
+                                    script{
+                                        dir ("services/${v2dir}"){
+                                            sh "pwd"
+                                            sh "ls -la"
+                                        }
+                                    }
+                                    dir ("services/${v2dir}/v2"){
+                                        sh "pwd"
+                                        sh "ls -la"
+                                        sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
+                                    }
+                                }
+                                //if("${BRANCH_NAME}" == "dev"){
+                                    stage(list[i] + '  docker push'){
+                                        def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                                        for (element in map) {
+                                            if("${element.key}" == "${noSpec}"){
+                                                tagname = "${element.key}"
+                                                tagnumber = "${element.value}"
+                                                break
+                                            }
+                                        }
+                                        dir ("services/${v2dir}/v2") {
+                                            echo "${tagname}"
+                                            echo "${tagnumber}"
+                                            sh "pwd"
+                                            sh "ls -la"
+                                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                                            sh "docker images"
+                                        }
+                                    }
+                                //}
+                            }
+                        }
                     }
-                    parallel parallelStagesMap
                 }
             }
             post{
@@ -48,157 +133,6 @@ pipeline {
                     cleanWs()
                 }
             }
-        }
+        }        
     }
 }
-
-def generateStage(serv) {
-    return {
-        stage("${serv}"){
-            def jname ="${serv}"
-            def secName = jname.split(" ")
-            if("${secName[0]}"!="dir4v2" && "${secName[0]}"!="dir5v2"){
-                matches = sh (
-                    script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${secName[0]} build'", returnStatus: true
-                ) == 0
-                echo "Matches: $matches"
-                echo "job: ${secName[0]}"
-                if("${secName[1]}"=="build"){
-                    if("$matches"!="false"){
-                        script {
-                            /*def root = tool name: 'maxapigo', type: 'go'
-                            withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
-                                dir ("services/${secName[0]}/cmd") {
-                                    sh "go clean -modcache"
-                                    sh "go build main.go"
-                                }
-                            }*/
-                            dir ("services/${secName[0]}"){
-                                sh "pwd"
-                                sh "ls -la"
-                            }
-                        }
-                        dir ("services/${secName[0]}"){
-                            sh "pwd"
-                            sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
-                        }
-                    }
-                }
-                //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
-                if("${secName[1]}"=="docker"){
-                    if("$matches"!="false"){
-                        def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                        def map = [
-                            dir1: "1.0.0", 
-                            dir2: "2.0.1", 
-                            dir3: "3.2.1",
-                            dir4: "1.2.3",
-                            dir5: "4.5.6",
-                            dir6: "7.8.9",
-                            dir7: "6.8.7",
-                        ]
-                        sleep(time: 30, unit: "SECONDS")
-                        for (def key in map.keySet()) {
-                            if("${key}" == "${noSpec}"){
-                                tagname = "${key}"
-                                tagnumber = "${map[key]}"
-                                break
-                            }
-                        }
-                        //if(("${secName[0]}"!="usermanagement") && ("${secName[0]}"!="websocketv2"))
-                        if(("${secName[0]}"!="dir6") && ("${secName[0]}"!="dir7")) {
-                            dir ("services/${secName[0]}"){
-                                echo "Tag Name: ${tagname}"
-                                echo "Tage Number: ${tagnumber}"
-                                sh "pwd"
-                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
-                                sh "docker images"
-                            }
-                        }
-                        else{
-                           dir ("services/${secName[0]}"){
-                                /*if("${secName[0]}"!="websocketv2"){
-                                    tagname = websocket
-                                }*/
-                                echo "${tagname}"
-                                echo "${tagnumber}"
-                                sh "pwd"
-                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                                sh "docker images"
-                                sh "pwd"
-                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                                sh "docker images"
-                           }
-                        }
-                    }
-                }
-            }
-            
-            else{
-                echo "job: ${secName[0]}"
-                redir = "${secName[0]}".toString().replaceAll("v2","")
-                echo "service of v2: ${redir}"
-                matchesv2 = sh (
-                    script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir} v2'", returnStatus: true
-                ) == 0
-                echo "Matches of v2: $matchesv2"
-                if("${secName[1]}"=="build"){
-                    if("$matchesv2"!="false"){
-                        v2dir = "${secName[0]}".toString().replaceAll("v2","")
-                        echo "v2 dir: ${v2dir}"
-                        echo "services/${v2dir}/v2"
-                        script {
-                            /*def root = tool name: 'maxapigo', type: 'go'
-                            withEnv(["GOPATH=${env.WORKSPACE}/go", "GOROOT=${root}", "GOBIN=${root}/bin", "PATH+GO=${root}/bin"]) {
-                                dir ("services/${secName[0]}/cmd") {
-                                    sh "go clean -modcache"
-                                    sh "go build main.go"
-                                }
-                            }*/
-                            dir ("services/${v2dir}/v2"){
-                                sh "pwd"
-                                sh "ls -la"
-                            }
-                        }
-                        dir ("services/${v2dir}/v2"){
-                            sh "pwd"
-                            sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
-                        }
-                    }
-                }
-                //if(("${secName[1]}"=="docker") && ("${BRANCH_NAME}" == "dev"))
-                if("${secName[1]}"=="docker"){
-                    if("$matchesv2"!="false"){
-                        v2dir = "${secName[0]}".toString().replaceAll("v2","")
-                        echo "v2 dir: ${v2dir}"
-                        echo "services/${v2dir}/v2"
-                        def noSpec = "${secName[0]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                        def map = [
-                            dir4v2: "4.2.1",
-                            dir5v2: "5.2.1"
-                        ]
-                        sleep(time: 30, unit: "SECONDS")
-                        for (def key in map.keySet()) {
-                            if("${key}" == "${noSpec}"){
-                                tagname = "${key}"
-                                tagnumber = "${map[key]}"
-                                break
-                            }
-                        }
-                           dir ("services/${v2dir}/v2"){
-                                echo "${tagname}"
-                                echo "${tagnumber}"
-                                sh "pwd"
-                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                                sh "docker images"
-                                sh "pwd"
-                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                                sh "docker images"
-                           }
-                        }
-                    }
-                }
-            }
-        }
-    }
-

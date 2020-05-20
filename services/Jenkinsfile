@@ -39,50 +39,50 @@ pipeline {
                             if("$matches"!="false"){
                                 stage(list[i] + ' build'){
                                     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                                    script{
+                                        script{
+                                            dir ("services/${list[i]}"){
+                                                sh "pwd"
+                                                sh "ls -la"
+                                            }
+                                        }
                                         dir ("services/${list[i]}"){
                                             sh "pwd"
                                             sh "ls -la"
+                                            sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
                                         }
-                                    }
-                                    dir ("services/${list[i]}"){
-                                        sh "pwd"
-                                        sh "ls -la"
-                                        sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
-                                    }
                                     }
                                 }
                                 //if("${BRANCH_NAME}" == "dev"){
                                     stage(list[i] + '  docker push'){
                                         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
-                                        def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                                        for (element in map) {
-                                            if("${element.key}" == "${noSpec}"){
-                                                tagname = "${element.key}"
-                                                tagnumber = "${element.value}"
-                                                break
+                                            def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                                            for (element in map) {
+                                                if("${element.key}" == "${noSpec}"){
+                                                    tagname = "${element.key}"
+                                                    tagnumber = "${element.value}"
+                                                    break
+                                                }
                                             }
-                                        }
-                                        dir ("services/${list[i]}") {
-                                            if(("${list[i]}"!="dir6") && ("${list[i]}"!="dir7")) {
-                                                echo "Tag Name: ${tagname}"
-                                                echo "Tag Number: ${tagnumber}"
-                                                sh "pwd"
-                                                sh "ls -la"
-                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
-                                                sh "docker images"
+                                            dir ("services/${list[i]}") {
+                                                if(("${list[i]}"!="dir6") && ("${list[i]}"!="dir7")) {
+                                                    echo "Tag Name: ${tagname}"
+                                                    echo "Tag Number: ${tagnumber}"
+                                                    sh "pwd"
+                                                    sh "ls -la"
+                                                    sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-${tagname}:${tagnumber} ."
+                                                    sh "docker images"
+                                                }
+                                                else{
+                                                    echo "Tag Name: ${tagname}"
+                                                    echo "Tag Number: ${tagnumber}"
+                                                    sh "pwd"
+                                                    sh "ls -la"
+                                                    sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                                                    sh "docker images"
+                                                    sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                                                    sh "docker images"
+                                                }
                                             }
-                                            else{
-                                                echo "Tag Name: ${tagname}"
-                                                echo "Tag Number: ${tagnumber}"
-                                                sh "pwd"
-                                                sh "ls -la"
-                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                                                sh "docker images"
-                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                                                sh "docker images"
-                                            }
-                                        }
                                         }
                                     }
                                 //}
@@ -100,36 +100,40 @@ pipeline {
                             echo "v2 dir: services/${v2dir}/v2"
                             if("$matchesv2"!="false"){
                                 stage(list[i] + ' build'){
-                                    script{
-                                        dir ("services/${v2dir}"){
+                                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                                        script{
+                                            dir ("services/${v2dir}"){
+                                                sh "pwd"
+                                                sh "ls -la"
+                                            }
+                                        }
+                                        dir ("services/${v2dir}/v2"){
                                             sh "pwd"
                                             sh "ls -la"
+                                            sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
                                         }
-                                    }
-                                    dir ("services/${v2dir}/v2"){
-                                        sh "pwd"
-                                        sh "ls -la"
-                                        sh "docker build --add-host=stash.nov.com:10.23.20.22 -f build/dockerfile ."
                                     }
                                 }
                                 //if("${BRANCH_NAME}" == "dev"){
                                     stage(list[i] + '  docker push'){
-                                        def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
-                                        for (element in map) {
-                                            if("${element.key}" == "${noSpec}"){
-                                                tagname = "${element.key}"
-                                                tagnumber = "${element.value}"
-                                                break
+                                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE'){
+                                            def noSpec = "${list[i]}".toString().replaceAll("[^a-zA-Z0-9 ]+","")
+                                            for (element in map) {
+                                                if("${element.key}" == "${noSpec}"){
+                                                    tagname = "${element.key}"
+                                                    tagnumber = "${element.value}"
+                                                    break
+                                                }
                                             }
-                                        }
-                                        dir ("services/${v2dir}/v2") {
-                                            echo "${tagname}"
-                                            echo "${tagnumber}"
-                                            sh "pwd"
-                                            sh "ls -la"
-                                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
-                                            sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
-                                            sh "docker images"
+                                            dir ("services/${v2dir}/v2") {
+                                                echo "${tagname}"
+                                                echo "${tagnumber}"
+                                                sh "pwd"
+                                                sh "ls -la"
+                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-intel:${tagnumber} ."
+                                                sh "docker build -f build/dockerfile -t 31147669.dkr.ecr.us-east-1.amazonaws.com/ss01-prod-maxapi-${tagname}-arm32:${tagnumber} ."
+                                                sh "docker images"
+                                            }
                                         }
                                     }
                                 //}

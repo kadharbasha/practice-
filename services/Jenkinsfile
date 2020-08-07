@@ -36,7 +36,7 @@ pipeline {
 
 def generateStage(serv) {
     return {
-        if("${serv}"!="dir1" && "${serv}"!="dir2" && "${serv}"!="dir3" && "${serv}"!="dir4" && "${serv}"!="dir5" && "${serv}"!="dir6" && "${serv}"!="dir7"){
+        if("${serv}"!="dir1" && "${serv}"!="dir2" && "${serv}"!="dir3"){
             matches1 = sh (
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${serv}'", returnStatus: true
             ) == 0
@@ -57,7 +57,7 @@ def generateStage(serv) {
             }
         }
         // condition for version 2 services
-        else if ("${serv}"=="dir4v2" || "${serv}"=="dir5v2"){
+        else("${serv}"=="dir4v2" || "${serv}"=="dir5v2"){
             redir1 = "${serv}".toString().replaceAll("v2","")
             matches2 = sh (
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir1} v2'", returnStatus: true

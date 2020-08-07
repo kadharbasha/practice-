@@ -21,7 +21,7 @@ pipeline {
                     ]
                      def parallelStagesMap = job.collectEntries {
                         echo "${it}"
-                            if("${it}"==dir6){
+                            if("${it}"=="dir6"){
                                 ["${it}" : generateStage(it)]
                             }
                     }

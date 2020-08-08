@@ -1,15 +1,5 @@
 import jenkins.model.*
-def job = [
-    "dir1",
-    "dir2",
-    "dir3",
-    "dir4",
-    "dir5",
-    "dir4v2",
-    "dir5v2",
-    "dir6",
-    "dir7"
-    ]
+
 pipeline  {  
 agent any  
     stages  {
@@ -27,6 +17,17 @@ agent any
 @NonCPS
 
 def getChangedFilesList() {
+       def job = [
+            "dir1",
+            "dir2",
+            "dir3",
+            "dir4",
+            "dir5",
+            "dir4v2",
+            "dir5v2",
+            "dir6",
+            "dir7"
+            ]
        changedFiles = []
        for(int i=0; i < job.size(); i++) {
             matches1 = sh (

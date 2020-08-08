@@ -1,42 +1,27 @@
-pipeline  {  
-agent any  
-    stages  {
+pipeline  {   
+	agent any   
+    stages  { 
          stage('Clone sources')  {
              steps  {
                 script {
-                	def filelist = getChangedFilesList()
-                	echo "${filelist}"
+                   	def filelist = getChangedFilesList() // List of filenames that have changed
+                  	def filename = filelist.find{item->item.contains("services")} //Returns the list of files having the yaml file extension from the filelist ArrayList
+             	 	echo "${filename}" //<filename>.yaml
                 }
             }
-        }
-    }
+       }
+   }
 }
 
 @NonCPS
-
 def getChangedFilesList() {
-       def job = [
-            "dir1",
-            "dir2",
-            "dir3",
-            "dir4",
-            "dir5",
-            "dir4v2",
-            "dir5v2",
-            "dir6",
-            "dir7"
-            ]
-       changedFiles = []
-       for(int i=0; i < job.size(); i++) {
-            matches1 = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${job[i]}'", returnStatus: true
-            ) == 0
-           echo "${matches1}"
-           echo "$matches1"
-           echo "{$matches1}"
-            /*if("$matches1"!="false"){
-            	changedFiles.add("${job[i]}")
-            }*/
-       }
-   return changedFiles
+   	changedFiles = []
+  	for (changeLogSet in currentBuild.changeSets) { 
+      	for (entry in changeLogSet.getItems()) { // for each commit in the detected changes
+         	for (file in entry.getAffectedFiles()) {
+                changedFiles.add(file.getPath()) // add changed file to list
+         	}
+      	}
+  	}
+  	return changedFiles
 }

@@ -59,7 +59,7 @@ def generateStage(serv) {
             }
         }
         // condition for version 2 services
-        else("${serv}"=="dir4v2" || "${serv}"=="dir5v2"){
+        else if("${serv}"=="dir4v2" || "${serv}"=="dir5v2"){
             redir1 = "${serv}".toString().replaceAll("v2","")
             matches2 = sh (
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir1} v2'", returnStatus: true

@@ -1,5 +1,5 @@
 def job = [
-	"dir1",
+    "dir1",
     "dir2",
     "dir3",
     "dir4",
@@ -21,6 +21,7 @@ agent any
             }
         }
     }
+}
 
 @NonCPS
 

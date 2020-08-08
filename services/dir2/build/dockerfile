@@ -2,7 +2,7 @@
 # Build the OS
 FROM golang:1.13.4-alpine as staging
 
-RUN mkdir test21
+RUN mkdir test27
 RUN mkdir test22
 RUN mkdir test26
 RUN mkdir test23

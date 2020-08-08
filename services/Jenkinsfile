@@ -1,4 +1,5 @@
-def list = [
+import jenkins.model.*
+def job = [
     "dir1",
     "dir2",
     "dir3",
@@ -16,7 +17,7 @@ agent any
              steps  {
                 script {
                 	def filelist = getChangedFilesList()
-                	echo "${filename}"
+                	echo "${filelist}"
                 }
             }
         }
@@ -27,12 +28,12 @@ agent any
 
 def getChangedFilesList() {
        changedFiles = []
-       for(int i=0; i < list.size(); i++) {
+       for(int i=0; i < job.size(); i++) {
             matches1 = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${list} build'", returnStatus: true
+                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${job} build'", returnStatus: true
             ) == 0
             if("$matches1"!="false"){
-            	changedFiles.add("${list}")
+            	changedFiles.add("${job}")
             }
        }
    return changedFiles

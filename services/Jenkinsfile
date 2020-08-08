@@ -41,7 +41,7 @@ def generateStage(serv) {
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${serv}'", returnStatus: true
             ) == 0
             echo "Matches1: $matches1 for Service: ${serv}"
-            if("$matches1"!="false"){
+            if("$matches1"!=false){
                 stage(serv + ' build'){
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
                         script {
@@ -63,7 +63,7 @@ def generateStage(serv) {
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir1} v2'", returnStatus: true
             ) == 0
             echo "Matches2: $matches2 for Service: ${serv} "
-            if("$matches2"!="false"){
+            if("$matches2"!=false){
                 stage(serv + ' build'){
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
                         script{

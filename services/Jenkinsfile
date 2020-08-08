@@ -1,84 +1,26 @@
-#!/usr/bin/env groovy
-
-pipeline {
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '6'))
-    }
-    //agent { label 'go-mgmt-slave'}
-    agent any
-    stages {
-        stage('parallel stage') {
-            steps {
+pipeline  {  
+agent any  
+    stages  {
+         stage('Clone sources')  {
+             steps  {
                 script {
-                    def job = [
-                        "dir1",
-                        "dir2",
-                        "dir3",
-                        "dir4",
-                        "dir5",
-                        "dir4v2",
-                        "dir5v2",
-                        "dir6",
-                        "dir7"
-                    ]
-                     def parallelStagesMap = job.collectEntries {
-                        ["${it}" : generateStage(it)]
-                    }
-                    parallel parallelStagesMap
-                }
-            }
-            post{
-                always{
-                    cleanWs()
+                	def filelist = getChangedFilesList()
+                	echo "${filename}"
                 }
             }
         }
     }
-}
 
-def generateStage(serv) {
-    return {
-        if("${serv}"!="dir4v2" && "${serv}"!="dir5v2"){
-            matches1 = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${serv} build'", returnStatus: true
-            ) == 0
-            echo "Matches1: $matches1 for Service: ${serv}"
-            if("$matches1"!="false"){
-                stage(serv + ' build'){
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
-                        script {
-                            dir ("services/${serv}/cmd") {                                     
-                                sh "ls -la"                                         
-                            }
-                            dir ("services/${serv}") {
-                                sh "docker ps"
-                            }
-                        }    
-                    }
+@NonCPS
+
+def getChangedFilesList() {
+       changedFiles = []
+       for (changeLogSet in currentBuild.changeSets) {
+            for (entry in changeLogSet.getItems()) { // for each commit in the detected changes
+                for (file in entry.getAffectedFiles()) {
+                    changedFiles.add(file.getPath()) // add changed file to list
                 }
-            }
-        }
-        // condition for version 2 services
-        else if("${serv}"=="dir4v2" || "${serv}"=="dir5v2"){
-            redir1 = "${serv}".toString().replaceAll("v2","")
-            matches2 = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir1} v2'", returnStatus: true
-            ) == 0
-            echo "Matches2: $matches2 for Service: ${serv} "
-            if("$matches2"!="false"){
-                stage(serv + ' build'){
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
-                        script{
-                            dir ("services/${redir1}/v2/cmd") {                                    
-                                sh "ls -la"                                              
-                            }
-                            dir ("services/${redir1}/v2"){
-                                sh "docker ps"
-                            }    
-                        }
-                    }
-                }
-            }
-        }
-    }
+           }
+       }
+   return changedFiles
 }

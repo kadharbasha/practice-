@@ -20,7 +20,6 @@ pipeline {
                         "dir7"
                     ]
                      def parallelStagesMap = job.collectEntries {
-                        echo "${it}"
                         ["${it}" : generateStage(it)]
                     }
                     parallel parallelStagesMap
@@ -37,7 +36,7 @@ pipeline {
 
 def generateStage(serv) {
     return {
-        if("${serv}"!="dir1" && "${serv}"!="dir2" && "${serv}"!="dir3"){
+        if("${serv}"!="dir4v2" && "${serv}"!="dir5v2"){
             matches1 = sh (
                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${serv}'", returnStatus: true
             ) == 0

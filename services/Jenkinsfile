@@ -1,3 +1,14 @@
+def job = [
+	"dir1",
+    "dir2",
+    "dir3",
+    "dir4",
+    "dir5",
+    "dir4v2",
+    "dir5v2",
+    "dir6",
+    "dir7"
+    ]
 pipeline  {  
 agent any  
     stages  {
@@ -5,22 +16,23 @@ agent any
              steps  {
                 script {
                 	def filelist = getChangedFilesList()
-                	echo "${filelist}"
+                	echo "${filename}"
                 }
             }
         }
     }
-}
+
 @NonCPS
 
 def getChangedFilesList() {
        changedFiles = []
-       for (changeLogSet in currentBuild.changeSets) {
-            for (entry in changeLogSet.getItems()) { // for each commit in the detected changes
-                for (file in entry.getAffectedFiles()) {
-                    changedFiles.add(file.getPath()) // add changed file to list
-                }
-           }
+       for(int i=0; i < list.size(); i++) {
+            matches1 = sh (
+                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${serv} build'", returnStatus: true
+            ) == 0
+            if("$matches1"!="false"){
+            	changedFiles.add("${serv}")
+            }
        }
    return changedFiles
 }

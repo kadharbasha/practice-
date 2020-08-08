@@ -40,7 +40,7 @@ def generateStage(serv) {
     return {
         if("${serv}"!="dir4v2" && "${serv}"!="dir5v2"){
             matches1 = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${serv}'", returnStatus: true
+                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${serv} build'", returnStatus: true
             ) == 0
             echo "Matches1: $matches1 for Service: ${serv}"
             if("$matches1"!="false"){

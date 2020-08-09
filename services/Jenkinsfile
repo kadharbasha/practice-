@@ -11,7 +11,8 @@ def serv = [
     ]
 pipeline {
     agent none
-    stage {
+    stages {
+        stage('parallel'){
         parallel {
         stage('collect stages') {
                 for(int i=0; i < list.size(); i++) {
@@ -58,6 +59,7 @@ pipeline {
                     }
                 }
             }
+        }
         }
     }
 }

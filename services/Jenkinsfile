@@ -14,7 +14,6 @@ pipeline {
     stages {
         parallel {
         stage('collect stages') {
-            
                 for(int i=0; i < list.size(); i++) {
                 if("${serv[i]}"!="dir4v2" && "${serv[i]}"!="dir5v2"){
                     matches1 = sh (

@@ -1,39 +1,63 @@
-import jenkins.model.*
-
-// While you can't use Groovy's .collect or similar methods currently, you can
-// still transform a list into a set of actual build steps to be executed in
-// parallel.
-
-def stepsForParallel = [:]
-
-// Since this method uses grep/collect it needs to be annotated with @NonCPS
-// It returns a simple string map so the workflow can be serialized
-@NonCPS
-def jobs(jobRegexp) {
-  Jenkins.instance.getAllItems()
-         .grep { it.name ==~ ~"${jobRegexp}"  }
-         .collect { [ name : it.name.toString(),
-                      fullName : it.fullName.toString() ] }
-}
-
-j = jobs('test-(dev|stage)-(unit|integration)')
-for (int i=0; i < j.size(); i++) {
-    echo "${j[i].name}"
-    stepsForParallel["${j[i].name}"] = transformIntoStep(j[i].fullName)
-}
-
-// Actually run the steps in parallel - parallel takes a map as an argument,
-// hence the above.
-parallel stepsForParallel
-
-// Take the string and echo it.
-def transformIntoStep(jobFullName) {
-    // We need to wrap what we return in a Groovy closure, or else it's invoked
-    // when this method is called, not when we pass it to parallel.
-    // To do this, you need to wrap the code below in { }, and either return
-    // that explicitly, or use { -> } syntax.
-    return {
-       // Job parameters can be added to this step
-       build jobFullName
+def serv = [
+        "dir1",
+        "dir2",
+        "dir3",
+        "dir4",
+        "dir5",
+        "dir4v2",
+        "dir5v2",
+        "dir6",
+        "dir7"
+    ]
+pipeline {
+    agent none
+    stages {
+        stage('collect stages') {
+            parallel {
+                for(int i=0; i < list.size(); i++) {
+                if("${serv[i]}"!="dir4v2" && "${serv[i]}"!="dir5v2"){
+                    matches1 = sh (
+                        script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${serv[i]}'", returnStatus: true
+                    ) == 0
+                    echo "Matches1: $matches1 for Service: ${serv[i]}"
+                    if("$matches1"!="false"){
+                        stage(serv + ' build'){
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
+                                script {
+                                    dir ("services/${serv[i]}/cmd") {                                     
+                                        sh "ls -la"                                         
+                                    }
+                                    dir ("services/${serv[i]}") {
+                                        sh "docker ps"
+                                    }
+                                }    
+                            }
+                        }
+                    }
+                }
+                // condition for version 2 services
+                else if("${serv[i]}"=="dir4v2" || "${serv[i]}"=="dir5v2"){
+                    redir1 = "${serv[i]}".toString().replaceAll("v2","")
+                    matches2 = sh (
+                        script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir1} v2'", returnStatus: true
+                    ) == 0
+                    echo "Matches2: $matches2 for Service: ${serv[i]} "
+                    if("$matches2"!="false"){
+                        stage(serv + ' build'){
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
+                                script{
+                                    dir ("services/${redir1}/v2/cmd") {                                    
+                                        sh "ls -la"                                              
+                                    }
+                                    dir ("services/${redir1}/v2"){
+                                        sh "docker ps"
+                                    }    
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

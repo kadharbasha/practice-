@@ -25,7 +25,7 @@ pipeline {
                         echo "Matches1: $matches1 for Service: ${job[i]}"
                         if("$matches1"!="false"){
                             def jobs = "${job[i]}"
-                            branches[job[i]] : {
+                            branches[job[i]] = {
                                 if("${jobs}"!="dir4v2" && "${jobs}"!="dir5v2"){
                                     stage(jobs + ' build'){
                                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){

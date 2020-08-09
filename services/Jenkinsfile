@@ -37,7 +37,7 @@ pipeline {
 
 
 def buildProject(serv) {
-    echo "inbuildproject ${serv}"
+    //echo "inbuildproject ${serv}"
     return {
         if("${serv}"!="dir4v2" && "${serv}"!="dir5v2"){
             /*matches1 = sh (

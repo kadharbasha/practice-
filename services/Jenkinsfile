@@ -15,7 +15,7 @@ pipeline {
         stage('parallel'){
         parallel {
         stage('collect stages') {
-                for(int i=0; i < list.size(); i++) {
+                for(int i=0; i < serv.size(); i++) {
                 if("${serv[i]}"!="dir4v2" && "${serv[i]}"!="dir5v2"){
                     matches1 = sh (
                         script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2'} | uniq | grep -x '${serv[i]}'", returnStatus: true

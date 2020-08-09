@@ -25,7 +25,7 @@ pipeline {
                         echo "Matches1: $matches1 for Service: ${job[i]}"
                         if("$matches1"!="false"){
                             def jobs = "${job[i]}"
-                            branches["Build "+job[i] : buildProject(jobs)]
+                            branches[job[i] = buildProject(jobs)]
                         }
                     }
                     parallel branches

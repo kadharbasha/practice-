@@ -3,7 +3,7 @@
 FROM golang:1.13.4-alpine as staging
 
 
-RUN mkdir test21
+RUN mkdir test22
 RUN mkdir test22
 RUN mkdir test13
 RUN mkdir test14

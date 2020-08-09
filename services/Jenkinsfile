@@ -12,8 +12,9 @@ def serv = [
 pipeline {
     agent none
     stages {
+        parallel {
         stage('collect stages') {
-            parallel {
+            
                 for(int i=0; i < list.size(); i++) {
                 if("${serv[i]}"!="dir4v2" && "${serv[i]}"!="dir5v2"){
                     matches1 = sh (

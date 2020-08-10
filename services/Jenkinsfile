@@ -19,7 +19,7 @@ pipeline {
             steps{
                 script{
                     for(int i=0; i < services.size(); i++) {
-                        if("${serv}"!="dir4v2" && "${serv}"!="dir5v2"){
+                        if("${services[i]}"!="dir4v2" && "${services[i]}"!="dir5v2"){
                             matches1 = sh (
                                 script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${services[i]} build'", returnStatus: true
                             ) == 0
@@ -29,9 +29,11 @@ pipeline {
                                 updated_services.add(service)
                             }
                         }
-                        else if("${serv}"=="dir4v2" && "${serv}"=="dir5v2"){
+                        else if("${services[i]}"=="dir4v2" && "${services[i]}"=="dir5v2"){
+                            def redir = "${services[i]}".toString().replaceAll("v2","")
+                            echo "service of v2: ${redir}"
                             matches2 = sh (
-                                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${services[i]} v2'", returnStatus: true
+                                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir} v2'", returnStatus: true
                             ) == 0
                             echo "Matches2: $matches2 for Service: ${services[i]}"
                             if("$matches2"!="false"){
@@ -73,8 +75,10 @@ def generateStage(serv) {
                 }
             }
             else if("${serv}"=="dir4v2" && "${serv}"=="dir5v2"){
+                def redir = "${serv}".toString().replaceAll("v2","")
+                echo "service of v2: ${redir}"
                 script {
-                    dir ("services/${serv}/build"){
+                    dir ("services/${redir}/v2/build"){
                         sh "pwd"
                         sh "ls -la"
                     }

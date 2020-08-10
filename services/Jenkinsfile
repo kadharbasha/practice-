@@ -1,4 +1,4 @@
-def job = [
+def services = [
     "dir1",
     "dir2",
     "dir3",
@@ -10,6 +10,7 @@ def job = [
     "dir7"
 ]
 
+def updated_services =[]
 
 pipeline {
     agent any
@@ -17,84 +18,21 @@ pipeline {
         stage('Fetching Updated Service') {
             steps{
                 script{
-                    def branches = [:]
-                    for(int i=0; i < job.size(); i++) {
+                    for(int i=0; i < services.size(); i++) {
                         matches1 = sh (
-                            script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${job[i]} build'", returnStatus: true
+                            script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${services[i]} build'", returnStatus: true
                         ) == 0
-                        echo "Matches1: $matches1 for Service: ${job[i]}"
+                        echo "Matches1: $matches1 for Service: ${services[i]}"
                         if("$matches1"!="false"){
-                            def jobs = "${job[i]}"
-                            branches[job[i]] = {
-                                if("${jobs}"!="dir4v2" && "${jobs}"!="dir5v2"){
-                                    stage(jobs + ' build'){
-                                        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
-                                            script {
-                                                dir ("services/${jobs}/cmd") {                                     
-                                                    sh "ls -la"                                         
-                                                }
-                                                dir ("services/${jobs}") {
-                                                    sh "docker ps"
-                                                }
-                                            }    
-                                        }
-                                    }
-                                }
-                            }
+                        //if("${services[i]}"=="dir3" || "${services[i]}"=="dir5" || "${services[i]}"=="dir7" ){
+                            def service = "${services[i]}"
+                            updated_services.add(service)
+                            echo "${updated_services}"
                         }
                     }
-                    parallel branches
+                    //parallel branches
                 }
             }
         }
     }
 }
-
-
-/*def buildProject(serv) {
-    //echo "inbuildproject ${serv}"
-    return {
-        if("${serv}"!="dir4v2" && "${serv}"!="dir5v2"){
-            matches1 = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${serv} build'", returnStatus: true
-            ) == 0
-            echo "Matches1: $matches1 for Service: ${serv}"
-            if("$matches1"!="false"){
-                stage(serv + ' build'){
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
-                        script {
-                            dir ("services/${serv}/cmd") {                                     
-                                sh "ls -la"                                         
-                            }
-                            dir ("services/${serv}") {
-                                sh "docker ps"
-                            }
-                        }    
-                    }
-                }
-            //}
-        }
-        // condition for version 2 services
-        else if("${serv}"=="dir4v2" || "${serv}"=="dir5v2"){
-            redir1 = "${serv}".toString().replaceAll("v2","")
-            /*matches2 = sh (
-                script: "git diff --name-only HEAD~1 | sort -u | awk -F/ {'print \$2,\$3'} | uniq | grep -x '${redir1} v2'", returnStatus: true
-            ) == 0
-            echo "Matches2: $matches2 for Service: ${serv} "
-            if("$matches2"!="false"){
-                stage(serv + ' build'){
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
-                        script{
-                            dir ("services/${redir1}/v2/cmd") {                                    
-                                sh "ls -la"                                              
-                            }
-                            dir ("services/${redir1}/v2"){
-                                sh "docker ps"
-                            }    
-                        }
-                    }
-                }
-            //}
-        }
-    }
-}*/

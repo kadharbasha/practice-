@@ -29,7 +29,7 @@ pipeline {
                                 updated_services.add(service)
                             }
                         }
-                        else if("${services[i]}"=="dir4v2" && "${services[i]}"=="dir5v2"){
+                        else if("${services[i]}"=="dir4v2" || "${services[i]}"=="dir5v2"){
                             def redir = "${services[i]}".toString().replaceAll("v2","")
                             echo "service of v2: ${redir}"
                             matches2 = sh (
@@ -74,7 +74,7 @@ def generateStage(serv) {
                     }
                 }
             }
-            else if("${serv}"=="dir4v2" && "${serv}"=="dir5v2"){
+            else if("${serv}"=="dir4v2" || "${serv}"=="dir5v2"){
                 def redir = "${serv}".toString().replaceAll("v2","")
                 echo "service of v2: ${redir}"
                 script {

@@ -34,5 +34,34 @@ pipeline {
                 }
             }
         }
+        stage('parallel stage') {
+            steps {
+                script {
+                    def parallelStagesMap = updated_services.collectEntries {
+                        ["${it}" : generateStage(it)]
+                    }
+                    parallel parallelStagesMap
+                }
+            }
+            post{
+                always{
+                    cleanWs()
+                }
+            }
+        }
+    }
+}
+def generateStage(serv) {
+    return {
+        stage("${serv}"){
+            if("${serv}"!="dir4v2" && "${serv}"!="dir5v2"){
+                script {
+                    dir ("services/${serv}"){
+                        sh "pwd"
+                        sh "ls -la"
+                    }
+                }
+            }
+        }
     }
 }
